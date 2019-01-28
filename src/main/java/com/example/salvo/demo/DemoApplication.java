@@ -15,20 +15,37 @@ public class DemoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository repository, GameRepository gameRep) {
+	public CommandLineRunner initData(PlayerRepository playerRep, GameRepository gameRep, GamePlayerRepository gamePlayerRep) {
 		return (args) -> {
 
-			repository.save(new Player("Jack", "Bauer"));
-			repository.save(new Player("Chloe", "O'Brian"));
-			repository.save(new Player("Kim", "Bauer"));
-			repository.save(new Player("David", "Palmer"));
-			repository.save(new Player("Michelle", "Dessler"));
+
 			Date date = new Date();
-			gameRep.save(new Game(date));
 			Date date1h = Date.from(date.toInstant().plusSeconds(3600));
-			gameRep.save(new Game(date1h));
 			Date date2h = Date.from(date.toInstant().plusSeconds(7200));
-			gameRep.save(new Game(date2h));
+
+
+			Player p1 = new Player("Jack", "Bauer");
+			Player p2 = new Player("Chloe", "O'Brian" );
+			Player p3 = new Player("Kim", "Bauer");
+			Player p4 = new Player("Tony", "Almeida");
+			playerRep.save(p1);
+			playerRep.save(p2);
+			playerRep.save(p3);
+			playerRep.save(p4);
+
+			Game g1 = new Game(date);
+			Game g2 = new Game(date1h);
+			Game g3 = new Game(date2h);
+			gameRep.save(g1);
+			gameRep.save(g2);
+			gameRep.save(g3);
+
+			GamePlayer gp1 = new GamePlayer(g1, p1);
+			gamePlayerRep.save(gp1);
+
+
+			GamePlayer gp2 = new GamePlayer(g2, p2);
+			gamePlayerRep.save(gp2);
 
 
 		};
