@@ -2,7 +2,6 @@ package com.example.salvo.demo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +16,7 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    public long id;
+    private long id;
     Date date ;
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
@@ -39,6 +38,9 @@ public class Game {
         gamePlayers.add(gamePlayer);
     }
 
+    public long getId(){
+        return this.id;
+    }
     @JsonIgnore
     public List<Player> getPlayers() {
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());

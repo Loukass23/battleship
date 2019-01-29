@@ -1,12 +1,9 @@
 package com.example.salvo.demo;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
-
 import static java.util.stream.Collectors.toList;
 
 @Entity
@@ -50,12 +47,12 @@ public class Player {
     }
 
 
-    public void addPlayer(GamePlayer gamePlayer) {
+    /*public void addPlayer(GamePlayer gamePlayer) {
         gamePlayer.setPlayer(this);
         gamePlayers.add(gamePlayer);
-    }
+    }*/
 
-    //@JsonIgnore
+    @JsonIgnore
     public List<Game> getGames() {
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
     }
