@@ -24,6 +24,7 @@ public class DemoApplication {
 			Date date2h = Date.from(date.toInstant().plusSeconds(7200));
 
 
+
 			Player p1 = new Player("Jack", "Bauer");
 			Player p2 = new Player("Chloe", "O'Brian" );
 			Player p3 = new Player("Kim", "Bauer");
@@ -44,8 +45,22 @@ public class DemoApplication {
 			gamePlayerRep.save(gp1);
 
 
-			GamePlayer gp2 = new GamePlayer(g2, p2);
+			GamePlayer gp2 = new GamePlayer(g1, p2);
 			gamePlayerRep.save(gp2);
+
+			GamePlayer gp3 = new GamePlayer(g2, p3);
+			gamePlayerRep.save(gp3);
+
+			GamePlayer gp4 = new GamePlayer(g2, p4);
+			gamePlayerRep.save(gp4);
+
+			GamePlayer gp5 = new GamePlayer(g3, p1);
+			gamePlayerRep.save(gp5);
+
+			GamePlayer gp6 = new GamePlayer(g3, p3);
+			gamePlayerRep.save(gp6);
+
+
 
 
 		};

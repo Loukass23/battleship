@@ -27,6 +27,7 @@ public class Game {
 
     public Game(Date date) {
        this.date = date;
+        System.out.println(date);
     }
 
     public String toString() {
