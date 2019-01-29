@@ -52,9 +52,16 @@ public class Player {
         gamePlayers.add(gamePlayer);
     }*/
 
-    @JsonIgnore
+    public long getId(){
+        return this.id;
+    }
+    public String getName(){
+        return this.firstName+" "+this.lastName;
+    }
+
+    /*@JsonIgnore
     public List<Game> getGames() {
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
-    }
+    }*/
 
 }

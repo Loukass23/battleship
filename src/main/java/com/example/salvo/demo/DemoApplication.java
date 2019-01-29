@@ -42,26 +42,33 @@ public class DemoApplication {
 			gameRep.save(g3);
 
 			Ship s1 = new Ship("Destroyer");
-			shipRep.save(s1);
 			Ship s2 = new Ship("Submarine");
-			shipRep.save(s2);
 			Ship s3 = new Ship("Patrol Boat");
-			shipRep.save(s3);
-			Ship s4 = new Ship("Submarine");
-			shipRep.save(s4);
-
-
 			GamePlayer gp1 = new GamePlayer(g1, p1);
-			gp1.addShip(s1);
-			gp1.addShip(s2);
-			gp1.addShip(s3);
-			gamePlayerRep.save(gp1);
+            gamePlayerRep.save(gp1);
+            gp1.addShip(s1);
+            gp1.addShip(s2);
+            gp1.addShip(s3);
+            shipRep.save(s1);
+            shipRep.save(s2);
+            shipRep.save(s3);
+            gamePlayerRep.save(gp1);
+
+            Ship s4 = new Ship("Destroyer");
+            Ship s5 = new Ship("Submarine");
+            Ship s6 = new Ship("Patrol Boat");
+			GamePlayer gp2 = new GamePlayer(g1, p2);
+            gamePlayerRep.save(gp2);
+			gp2.addShip(s4);
+            gp2.addShip(s5);
+            gp2.addShip(s6);
+            shipRep.save(s4);
+            shipRep.save(s5);
+            shipRep.save(s6);
+            gamePlayerRep.save(gp2);
 
 
 /*
-			GamePlayer gp2 = new GamePlayer(g1, p2);
-			gamePlayerRep.save(gp2);
-
 			GamePlayer gp3 = new GamePlayer(g2, p3);
 			gamePlayerRep.save(gp3);
 
@@ -72,8 +79,8 @@ public class DemoApplication {
 			gamePlayerRep.save(gp5);
 
 			GamePlayer gp6 = new GamePlayer(g3, p3);
-			gamePlayerRep.save(gp6);
-*/
+			gamePlayerRep.save(gp6);*/
+
 
 
 

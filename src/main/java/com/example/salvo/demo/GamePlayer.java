@@ -46,8 +46,10 @@ public class GamePlayer {
     }
 
     public void addShip(Ship ship) {
-         this.ships.add(ship);
-        System.out.println(ship.type);
+        ship.setGamePlayer(this);
+         ships.add(ship);
+        System.out.println(ship.getGamePlayer());
+
     }
 
     public void setPlayer(Player player) {
@@ -61,7 +63,7 @@ public class GamePlayer {
 
     @Override
     public String toString() {
-        return "game: " + this.game + "- Player: " + this.player;
+        return "gamePlayer:"+ this.id +" - Game: " + this.game + "- Player: " + this.player + this.ships;
     }
 
     public long getId(){
@@ -77,6 +79,6 @@ public class GamePlayer {
     }
 
     public Set<Ship> getShips() {
-        return this.ships;
+        return ships;
     }
 }

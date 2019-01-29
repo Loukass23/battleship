@@ -26,7 +26,6 @@ public class Game {
 
     public Game(Date date) {
        this.date = date;
-        System.out.println(date);
     }
 
     public String toString() {
@@ -41,8 +40,9 @@ public class Game {
     public long getId(){
         return this.id;
     }
-    @JsonIgnore
+    /*@JsonIgnore
     public List<Player> getPlayers() {
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
-    }
+    }*/
+
 }
