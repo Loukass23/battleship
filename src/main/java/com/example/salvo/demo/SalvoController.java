@@ -52,7 +52,7 @@ return gamesObj;
             if (Objects.equals(gamePl.getId(), ship.getGamePlayer().getId())){
                 Map<String, Object> gamePlayers = new HashMap<>();
                 gamePlayers.put("type", ship.getType());
-                //gamePlayers.put("ships", gamePl.getShips().toString());
+                gamePlayers.put("location",ship.getLocations());
                 shipsObj.add(gamePlayers);
             }
         });

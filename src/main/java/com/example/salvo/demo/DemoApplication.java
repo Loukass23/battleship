@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -54,7 +56,11 @@ public class DemoApplication {
             shipRep.save(s3);
             gamePlayerRep.save(gp1);
 
-            Ship s4 = new Ship("Destroyer");
+			List<String> shipLocation = new ArrayList<String>();;
+			shipLocation.add("H1");
+			shipLocation.add("H3");
+			shipLocation.add("H4");
+            Ship s4 = new Ship("Destroyer",shipLocation);
             Ship s5 = new Ship("Submarine");
             Ship s6 = new Ship("Patrol Boat");
 			GamePlayer gp2 = new GamePlayer(g1, p2);
