@@ -8,50 +8,53 @@ import java.util.List;
 
 
 @Entity
-public class Ship {
+public class Salvo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
-    private String type ;
+    private Integer turn ;
 
 
     @ElementCollection
-    @Column(name="ShipLocation")
-    private List<String> locations = new ArrayList<>();
+    @Column(name="SalvoLocation")
+    private List<String> salvoLocations = new ArrayList<>();
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gamePlayer_id")
     private GamePlayer gamePlayer;
 
 
+    public Salvo() {}
 
-    public Ship() {}
+    public Salvo(Integer turn, List<String> locations) {
+        this.turn = turn;
+        this.salvoLocations = locations;
 
-    public Ship(String type) {
-        this.type = type;
     }
-    public Ship(String type, List<String> location) {
-        this.type = type;
-        this.locations = location;
+    public void addLocations(List<String> locations){
+
     }
+
     public void setGamePlayer(GamePlayer gamePlayer){
-        this.gamePlayer = gamePlayer;
+        this.gamePlayer  = gamePlayer;
     }
     public long getId(){
         return this.id;
     }
-    public String getType(){
-        return this.type;
+
+    public Integer getTurn(){
+        return this.turn;
     }
 
-    public List<String> getLocations(){
-        return this.locations;
+    public List<String> getSalvoesLocations(){
+        return this.salvoLocations;
     }
 
     @Override
     public String toString() {
-        return this.type;
+        return this.turn.toString();
     }
 
     @JsonIgnore

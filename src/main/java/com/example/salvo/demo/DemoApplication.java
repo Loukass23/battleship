@@ -17,7 +17,8 @@ public class DemoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRep, GameRepository gameRep, GamePlayerRepository gamePlayerRep, ShipRepository shipRep) {
+	public CommandLineRunner initData(PlayerRepository playerRep, GameRepository gameRep,
+									  GamePlayerRepository gamePlayerRep, ShipRepository shipRep, SalvoRepository salvRep ) {
 		return (args) -> {
 
 
@@ -102,7 +103,28 @@ public class DemoApplication {
             shipRep.save(s6);
             gamePlayerRep.save(gp2);
 
+			List<String> salvoLocation1 = new ArrayList<>();
+			salvoLocation1.add("C4");
+			salvoLocation1.add("D4");
+			List<String> salvoLocation2 = new ArrayList<>();
+			salvoLocation2.add("H8");
+			salvoLocation2.add("F1");
+			List<String> salvoLocation3 = new ArrayList<>();
+			salvoLocation3.add("I10");
+			salvoLocation3.add("A10");
+			Salvo salv1 = new Salvo(1, salvoLocation1);
+			Salvo salv2 = new Salvo(1, salvoLocation2);
+			Salvo salv3 = new Salvo(2, salvoLocation3);
+			gp2.addSalvo(salv2);
+			gp1.addSalvo(salv1);
+			salvRep.save(salv1);
+			salvRep.save(salv2);
+			gamePlayerRep.save(gp2);
+			gamePlayerRep.save(gp1);
 
+			gp1.addSalvo(salv3);
+			salvRep.save(salv3);
+			gamePlayerRep.save(gp1);
 /*
 			GamePlayer gp3 = new GamePlayer(g2, p3);
 			gamePlayerRep.save(gp3);

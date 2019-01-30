@@ -47,6 +47,7 @@ return gamesObj;
                 gamePlayers.put("id", gamePl.getId());
                 gamePlayers.put("player", findPlayersfromGamePlayer(gamePl) );
                 gamePlayers.put("ships", findShipsfromGamePlayer(gamePl));
+                gamePlayers.put("salvoes", findSalvoesfromGamePlayer(gamePl));
                 playerObj.add(gamePlayers);
 
         });
@@ -68,6 +69,18 @@ return gamesObj;
                 shipsObj.add(ships);
         });
         return shipsObj;
+    }
+
+    public List<Object> findSalvoesfromGamePlayer(GamePlayer gamePl){
+        List<Object> salvoObj = new ArrayList<>();
+        gamePl.getSalvoes().stream().forEach(salvo -> {
+            System.out.println(salvo.getSalvoesLocations());
+            Map<String, Object> salvoes = new HashMap<>();
+            salvoes.put("turn", salvo.getTurn());
+            salvoes.put("salvoes_location",salvo.getSalvoesLocations());
+            salvoObj.add(salvoes);
+        });
+        return salvoObj;
     }
 
 }
