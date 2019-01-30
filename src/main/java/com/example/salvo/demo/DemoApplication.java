@@ -43,27 +43,56 @@ public class DemoApplication {
 			gameRep.save(g2);
 			gameRep.save(g3);
 
-			Ship s1 = new Ship("Destroyer");
-			Ship s2 = new Ship("Submarine");
-			Ship s3 = new Ship("Patrol Boat");
+			//Ships Player 1
+			List<String> shipLocation1 = new ArrayList<>();;
+			shipLocation1.add("H8");
+			shipLocation1.add("H9");
+			shipLocation1.add("H10");
+			List<String> shipLocation2 = new ArrayList<>();;
+			shipLocation2.add("A6");
+			shipLocation2.add("A7");
+			shipLocation2.add("A8");
+			shipLocation2.add("A9");
+			List<String> shipLocation3 = new ArrayList<>();;
+			shipLocation3.add("C4");
+			shipLocation3.add("D4");
+			shipLocation3.add("E4");
+			shipLocation3.add("F4");
+			Ship s1 = new Ship("Destroyer",shipLocation1);
+			Ship s2 = new Ship("Submarine",shipLocation2);
+			Ship s3 = new Ship("Patrol Boat",shipLocation3);
 			GamePlayer gp1 = new GamePlayer(g1, p1);
-            gamePlayerRep.save(gp1);
-            gp1.addShip(s1);
-            gp1.addShip(s2);
-            gp1.addShip(s3);
-            shipRep.save(s1);
-            shipRep.save(s2);
-            shipRep.save(s3);
-            gamePlayerRep.save(gp1);
 
-			List<String> shipLocation = new ArrayList<String>();;
-			shipLocation.add("H1");
-			shipLocation.add("H3");
-			shipLocation.add("H4");
-            Ship s4 = new Ship("Destroyer",shipLocation);
-            Ship s5 = new Ship("Submarine");
-            Ship s6 = new Ship("Patrol Boat");
+			gamePlayerRep.save(gp1);
+			gp1.addShip(s1);
+			gp1.addShip(s2);
+			gp1.addShip(s3);
+			shipRep.save(s1);
+			shipRep.save(s2);
+			shipRep.save(s3);
+			gamePlayerRep.save(gp1);
+
+            //Ships Player 2
+			List<String> shipLocation4 = new ArrayList<String>();;
+			shipLocation4.add("I8");
+			shipLocation4.add("I9");
+			shipLocation4.add("I10");
+			List<String> shipLocation5 = new ArrayList<String>();;
+			shipLocation5.add("A1");
+			shipLocation5.add("A2");
+			shipLocation5.add("A3");
+			shipLocation5.add("A4");
+			List<String> shipLocation6 = new ArrayList<String>();;
+			shipLocation6.add("C4");
+			shipLocation6.add("D4");
+			shipLocation6.add("E4");
+			shipLocation6.add("F4");
+            Ship s4 = new Ship("Destroyer",shipLocation4);
+            Ship s5 = new Ship("Submarine",shipLocation5);
+            Ship s6 = new Ship("Patrol Boat",shipLocation6);
 			GamePlayer gp2 = new GamePlayer(g1, p2);
+
+
             gamePlayerRep.save(gp2);
 			gp2.addShip(s4);
             gp2.addShip(s5);

@@ -1,9 +1,13 @@
-let url = 'http://localhost:8080/api/games'
+let url = '/api/games'
 fetchJson(url);
+let gameGrid = {
+  horizontal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  vertical: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+}
+buildGameTable(gameGrid)
 
-
-function getHeadersHtml(data) {
-    return "<tr><th>Game</th><th>Date</th></tr>";
+function getHeadersHtml() {
+  return "<tr><th>Game</th><th>Date</th></tr>";
 }
 
 function renderHeaders(data) {
@@ -12,14 +16,15 @@ function renderHeaders(data) {
 }
 
 function getColumnsHtml(row) {
-  return row.map(function(element) {
-    return "<td>" + element.id + "</td><td>"+ element.created + "</td>";
+  return row.map(function (element) {
+    return "<td>" + element.id + "</td><td>" + element.created + "</td>";
   }).join("")
 }
+
 function getRowsHtml(data) {
   return data.map(element => {
-    return "<tr><td>" + element.id + "</td><td>"+ element.created + "</td></tr>"
-    })
+    return "<tr><td>" + element.id + "</td><td>" + element.created + "</td></tr>"
+  })
 }
 
 function renderRows(data) {
@@ -33,25 +38,49 @@ function renderTable(data) {
 }
 
 function fetchJson(url) {
+  return fetch(url).then(function (response) {
+      if (response.ok) {
+        return response.json();
+      }
+    }).then(function (json) {
 
-    return fetch(url).then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
-        }).then(function (json) {
-
-            console.log(json)
-            renderTable(json)
-
-
-
-        })
-        .catch(console.error("Server Error"));
-
+      console.log('test')
+      renderTable(json)
+    })
+    .catch(function (error) {
+      console.log(error.message);
+    });
 }
-/*
-renderTable({"destination_addresses":["San Francisco, CA, USA","Victoria, BC, Canada"],"origin_addresses":["Vancouver, BC, Canada","Seattle, WA, USA"],
-"rows":[{"elements":[{"distance":{"text":"1,528 km","value":1528361},"duration":{"text":"14 hours 47 mins","value":53236},"status":"OK"},{"distance":
-{"text":"114 km","value":114166},"duration":{"text":"3 hours 10 mins","value":11415},"status":"OK"}]},{"elements":[{"distance":{"text":"1,300 km",
-"value":1299975},"duration":{"text":"12 hours 21 mins","value":44447},"status":"OK"},{"distance":{"text":"172 km","value":171688},"duration":
-{"text":"4 hours 37 mins","value":16602},"status":"OK"}]}],"status":"OK"});*/
+
+function renderTable(data) {
+  renderHeaders(data);
+  renderRows(data);
+}
+
+
+
+function buildGameTable(gameGrid) {
+  let thead = document.getElementById("game-table-header")
+  let th0 = document.createElement('th')
+  th0.innerHTML = '<b>#</b>'
+  thead.appendChild(th0)
+  gameGrid.horizontal.forEach(element => {
+    let th = document.createElement('th')
+    th.innerHTML = '<b>' + element + '</b>'
+    thead.appendChild(th)
+  });
+  let tbody = document.getElementById("game-table")
+  for (let i in gameGrid.vertical) {
+    let tr = document.createElement('tr')
+    let tdhead = document.createElement('td')
+    tdhead.innerHTML = '<b>' + gameGrid.vertical[i] + '</b>'
+    tr.appendChild(tdhead)
+    for (let j in gameGrid.horizontal) {
+      let td = document.createElement('td')
+      td.innerHTML = gameGrid.vertical[i] + gameGrid.horizontal[j]
+      td.setAttribute('id', gameGrid.vertical[i] + gameGrid.horizontal[j])
+      tr.appendChild(td)
+    }
+    tbody.appendChild(tr)
+  }
+}
