@@ -22,8 +22,7 @@ repositories {
 }
 
 bootRun {
-	//addResources = true
-	main = 'com.example.salvo.demo.DemoApplication'
+	addResources = true
 }
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

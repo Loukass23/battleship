@@ -12,6 +12,7 @@ function setPlayer(player) {
 }
 
 function fetchJson(url) {
+    console.log(url)
     return fetch(url + gamePlayerId).then(function (response) {
             if (response.ok) {
                 return response.json();
@@ -20,7 +21,6 @@ function fetchJson(url) {
 
             console.log(json)
             json.ships.forEach(e => shipLocations = shipLocations.concat(e.locations))
-            console.log(shipLocations)
             setPlayer(json.player.name)
             buildGameTable(gameGrid)
 

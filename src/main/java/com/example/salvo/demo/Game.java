@@ -1,9 +1,13 @@
 package com.example.salvo.demo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -36,7 +40,12 @@ public class Game {
     public long getId(){
         return this.id;
     }
-    /*@JsonIgnore
+
+    @JsonIgnore
+    public Set<GamePlayer> getGamePlayers(){
+        return this.gamePlayers;
+    }
+    /*
     public List<Player> getPlayers() {
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
     }*/

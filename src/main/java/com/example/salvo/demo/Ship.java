@@ -15,6 +15,7 @@ public class Ship {
     private long id;
     private String type ;
 
+
     @ElementCollection
     @Column(name="ShipLocation")
     private List<String> locations = new ArrayList<>();

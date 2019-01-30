@@ -56,31 +56,3 @@ function renderTable(data) {
   renderHeaders(data);
   renderRows(data);
 }
-
-
-
-function buildGameTable(gameGrid) {
-  let thead = document.getElementById("game-table-header")
-  let th0 = document.createElement('th')
-  th0.innerHTML = '<b>#</b>'
-  thead.appendChild(th0)
-  gameGrid.horizontal.forEach(element => {
-    let th = document.createElement('th')
-    th.innerHTML = '<b>' + element + '</b>'
-    thead.appendChild(th)
-  });
-  let tbody = document.getElementById("game-table")
-  for (let i in gameGrid.vertical) {
-    let tr = document.createElement('tr')
-    let tdhead = document.createElement('td')
-    tdhead.innerHTML = '<b>' + gameGrid.vertical[i] + '</b>'
-    tr.appendChild(tdhead)
-    for (let j in gameGrid.horizontal) {
-      let td = document.createElement('td')
-      td.innerHTML = gameGrid.vertical[i] + gameGrid.horizontal[j]
-      td.setAttribute('id', gameGrid.vertical[i] + gameGrid.horizontal[j])
-      tr.appendChild(td)
-    }
-    tbody.appendChild(tr)
-  }
-}

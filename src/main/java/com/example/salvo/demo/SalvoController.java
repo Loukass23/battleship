@@ -21,6 +21,7 @@ public class SalvoController {
     @RequestMapping("/game_view/{gamePlayerId}")
     public GamePlayer findGamePlayer(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        System.out.println(gamePlayer);
         return gamePlayer;
     }
 
@@ -32,36 +33,39 @@ public class SalvoController {
             Map<String, Object> games = new HashMap<>();
             games.put("created", game.date.toString());
             games.put("id", game.getId());
-            games.put("gamePlayers", findPlayersfromGame(game));
+            games.put("gamePlayers", findGamePlayersfromGame(game));
             gamesObj.add(games);
         });
 return gamesObj;
     }
 
 
-    public List<Object> findPlayersfromGame(Game game){
+    public List<Object> findGamePlayersfromGame(Game game){
         List<Object> playerObj = new ArrayList<>();
-        gamePlayerRep.findAll().stream().forEach(gamePl -> {
-            if (Objects.equals(gamePl.getGame().getId(), game.getId())) {
+        game.getGamePlayers().forEach(gamePl -> {
                 Map<String, Object> gamePlayers = new HashMap<>();
                 gamePlayers.put("id", gamePl.getId());
+                gamePlayers.put("player", findPlayersfromGamePlayer(gamePl) );
                 gamePlayers.put("ships", findShipsfromGamePlayer(gamePl));
-                playerObj.add(gamePl);
-                System.out.println(gamePl);
-            }
+                playerObj.add(gamePlayers);
+
         });
         return playerObj;
     }
+    public Object findPlayersfromGamePlayer(GamePlayer gamePl){
+        Player player = gamePl.getPlayer();
+        Map<String, Object> myplayer = new HashMap<>();
+        myplayer.put("id", player.getId());
+        myplayer.put("name",player.getName());
+        return myplayer;
+    }
     public List<Object> findShipsfromGamePlayer(GamePlayer gamePl){
         List<Object> shipsObj = new ArrayList<>();
-        shipRep.findAll().stream().forEach(ship -> {
-
-            if (Objects.equals(gamePl.getId(), ship.getGamePlayer().getId())){
-                Map<String, Object> gamePlayers = new HashMap<>();
-                gamePlayers.put("type", ship.getType());
-                gamePlayers.put("location",ship.getLocations());
-                shipsObj.add(gamePlayers);
-            }
+        gamePl.getShips().stream().forEach(ship -> {
+                Map<String, Object> ships = new HashMap<>();
+                ships.put("type", ship.getType());
+                ships.put("location",ship.getLocations());
+                shipsObj.add(ships);
         });
         return shipsObj;
     }
