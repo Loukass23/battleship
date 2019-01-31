@@ -44,7 +44,6 @@ function fetchJson(url) {
       }
     }).then(function (json) {
 
-      console.log('test')
       renderTable(json)
     })
     .catch(function (error) {

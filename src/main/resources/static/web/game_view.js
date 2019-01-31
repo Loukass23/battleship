@@ -22,17 +22,83 @@ function fetchJson(url) {
 
             console.log(json)
             json.ships.forEach(e => shipLocations = shipLocations.concat(e.locations))
-            json.salvoes.forEach(e => salvoesLocations = salvoesLocations.concat(e.salvoesLocations))
+            json.salvoes.forEach(e => salvoesLocations = salvoesLocations.concat(e))
             setPlayer(json.player.name)
-            buildGameTable(gameGrid)
-            buildGameTableFired(gameGrid)
-
+            buildGameGrid(gameGrid, 'fleet-grid')
+            buildGameGrid(gameGrid, 'fired-grid')
+            // buildGameTableFired(gameGrid)
         })
         .catch(error => {
             console.log(error.message);
         });
 }
 
+function buildGameGrid(gameGrid, gridType) {
+    let fleetGrid = document.getElementById(gridType)
+
+    let headerTop = document.createElement('div')
+    headerTop.className = 'row height h-100 text-center'
+
+    let keyCell = document.createElement('div')
+    keyCell.className = 'col-sm-1 border'
+    keyCell.innerHTML = '#'
+    headerTop.appendChild(keyCell)
+
+    gameGrid.horizontal.forEach(element => {
+        let cellTop = document.createElement('div')
+        cellTop.className = 'col-sm-1 border'
+        cellTop.innerHTML = '<b>' + element + '</b>'
+        headerTop.appendChild(cellTop)
+    })
+    fleetGrid.appendChild(headerTop)
+
+    for (let i in gameGrid.vertical) {
+        let row = document.createElement('div')
+        row.className = 'row text-center'
+
+        let headerLeft = document.createElement('div')
+        headerLeft.className = 'col-sm-1 border'
+        headerLeft.innerHTML = gameGrid.vertical[i]
+        row.appendChild(headerLeft)
+
+        for (let j in gameGrid.horizontal) {
+            let column = document.createElement('div')
+            let cellId = gameGrid.vertical[i] + gameGrid.horizontal[j]
+            column.className = 'col-sm-1 border px-0 py-0'
+            let cell = document.createElement('div')
+            cell.setAttribute('id', cellId)
+
+            if (gridType == 'fleet-grid') {
+                cell.innerHTML = cellId
+                isShip(cellId) ? cell.className = 'text-primary bg-primary' : cell.className = ''
+            }
+            if (gridType == 'fired-grid') {
+                if (isFired(cellId) != null) {
+                    cell.innerHTML = isFired(cellId)
+                    cell.className = 'bg-danger'
+                }
+            }
+
+            column.appendChild(cell)
+            row.appendChild(column)
+        }
+        fleetGrid.appendChild(row)
+
+    }
+}
+
+function isShip(cell) {
+    return shipLocations.includes(cell)
+}
+
+function isFired(cell) {
+    let turn = null
+    salvoesLocations.forEach(e => {
+        if (e.salvoesLocations.includes(cell))
+            turn = e.turn
+    })
+    return turn
+}
 
 function buildGameTable(gameGrid) {
     let thead = document.getElementById("game-table-header")
