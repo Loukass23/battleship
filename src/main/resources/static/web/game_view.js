@@ -1,12 +1,14 @@
-let url = '/api/game_view/'
+let urlGameView = '/api/game_view/'
 let gamePlayerId = new URLSearchParams(window.location.search).get("gp");
 let shipLocations = []
 let salvoesLocations = []
+let opponentSalvoesLocations = []
 let gameGrid = {
     horizontal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     vertical: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 }
-fetchJson(url);
+
+fetchJson(urlGameView);
 
 function setPlayer(player) {
     document.getElementById("playerName").innerHTML = player
@@ -19,10 +21,10 @@ function fetchJson(url) {
                 return response.json();
             }
         }).then(function (json) {
-
             console.log(json)
             json.ships.forEach(e => shipLocations = shipLocations.concat(e.locations))
             json.salvoes.forEach(e => salvoesLocations = salvoesLocations.concat(e))
+            json.opponentSalvoes.forEach(e => opponentSalvoesLocations = opponentSalvoesLocations.concat(e))
             setPlayer(json.player.name)
             buildGameGrid(gameGrid, 'fleet-grid')
             buildGameGrid(gameGrid, 'fired-grid')
@@ -33,11 +35,12 @@ function fetchJson(url) {
         });
 }
 
+
 function buildGameGrid(gameGrid, gridType) {
     let fleetGrid = document.getElementById(gridType)
 
     let headerTop = document.createElement('div')
-    headerTop.className = 'row height h-100 text-center'
+    headerTop.className = 'row text-center'
 
     let keyCell = document.createElement('div')
     keyCell.className = 'col-sm-1 border'
@@ -54,32 +57,34 @@ function buildGameGrid(gameGrid, gridType) {
 
     for (let i in gameGrid.vertical) {
         let row = document.createElement('div')
-        row.className = 'row text-center'
+        row.className = 'row text-center my-0'
 
         let headerLeft = document.createElement('div')
-        headerLeft.className = 'col-sm-1 border'
+        headerLeft.className = 'col-sm-1 border '
         headerLeft.innerHTML = gameGrid.vertical[i]
         row.appendChild(headerLeft)
 
         for (let j in gameGrid.horizontal) {
             let column = document.createElement('div')
             let cellId = gameGrid.vertical[i] + gameGrid.horizontal[j]
-            column.className = 'col-sm-1 border px-0 py-0'
-            let cell = document.createElement('div')
-            cell.setAttribute('id', cellId)
+            column.setAttribute('id', cellId)
 
             if (gridType == 'fleet-grid') {
-                cell.innerHTML = cellId
-                isShip(cellId) ? cell.className = 'text-primary bg-primary' : cell.className = ''
+
+                isShip(cellId) ? column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-primary' : column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0'
+                if (isHit(cellId)) {
+                    column.innerHTML = isHit(cellId)
+                    column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-danger'
+                }
             }
             if (gridType == 'fired-grid') {
+                column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0'
                 if (isFired(cellId) != null) {
-                    cell.innerHTML = isFired(cellId)
-                    cell.className = 'bg-danger'
+                    column.innerHTML = isFired(cellId)
+                    column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-info'
                 }
             }
 
-            column.appendChild(cell)
             row.appendChild(column)
         }
         fleetGrid.appendChild(row)
@@ -98,6 +103,15 @@ function isFired(cell) {
             turn = e.turn
     })
     return turn
+}
+
+function isHit(cell) {
+    let turn = null
+    opponentSalvoesLocations.forEach(e => {
+        if (e.salvoesLocations.includes(cell))
+            turn = e.turn
+    })
+    return shipLocations.includes(cell) ? turn : null
 }
 
 function buildGameTable(gameGrid) {

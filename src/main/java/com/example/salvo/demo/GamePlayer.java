@@ -1,13 +1,11 @@
 package com.example.salvo.demo;
 
-
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
+import java.util.stream.Collectors;
 
 @Entity
 public class GamePlayer {
@@ -34,8 +32,6 @@ public class GamePlayer {
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     Set<Salvo> salvoes = new HashSet<>();
 
-
-
     public GamePlayer() {
     }
 
@@ -43,9 +39,6 @@ public class GamePlayer {
         this.game = game;
         this.player = player;
         this.date = new Date();
-
-
-
     }
 
     public void addShip(Ship ship) {
@@ -87,7 +80,18 @@ public class GamePlayer {
     public Set<Ship> getShips() {
         return ships;
     }
+
     public Set<Salvo> getSalvoes() {
         return salvoes;
+    }
+    public Set<Salvo> getOpponentSalvoes(){
+        Set<GamePlayer> gamePlayers = this.getGame().getGamePlayers();
+        final GamePlayer[] opponent = new GamePlayer[1];
+        gamePlayers.forEach(e -> {
+            if(e.getId() != this.getId()){
+                opponent[0] = e;
+            }
+        });
+       return  opponent[0].getSalvoes();
     }
 }

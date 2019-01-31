@@ -45,16 +45,16 @@ public class DemoApplication {
 			gameRep.save(g3);
 
 			//Ships Player 1
-			List<String> shipLocation1 = new ArrayList<>();;
+			List<String> shipLocation1 = new ArrayList<>();
 			shipLocation1.add("H8");
 			shipLocation1.add("H9");
 			shipLocation1.add("H10");
-			List<String> shipLocation2 = new ArrayList<>();;
+			List<String> shipLocation2 = new ArrayList<>();
 			shipLocation2.add("A6");
 			shipLocation2.add("A7");
 			shipLocation2.add("A8");
 			shipLocation2.add("A9");
-			List<String> shipLocation3 = new ArrayList<>();;
+			List<String> shipLocation3 = new ArrayList<>();
 			shipLocation3.add("C4");
 			shipLocation3.add("D4");
 			shipLocation3.add("E4");

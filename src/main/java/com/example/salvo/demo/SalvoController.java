@@ -21,7 +21,6 @@ public class SalvoController {
     @RequestMapping("/game_view/{gamePlayerId}")
     public GamePlayer findGamePlayer(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
-        System.out.println(gamePlayer);
         return gamePlayer;
     }
 
