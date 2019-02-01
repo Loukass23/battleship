@@ -40,7 +40,7 @@ function buildGameGrid(gameGrid, gridType) {
     let fleetGrid = document.getElementById(gridType)
 
     let headerTop = document.createElement('div')
-    headerTop.className = 'row text-center'
+    headerTop.className = 'row text-center '
 
     let keyCell = document.createElement('div')
     keyCell.className = 'col-sm-1 border'

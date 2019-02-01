@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -21,6 +19,9 @@ public class Game {
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
+
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
 
     public Game() {}
 
@@ -44,6 +45,10 @@ public class Game {
     @JsonIgnore
     public Set<GamePlayer> getGamePlayers(){
         return this.gamePlayers;
+    }
+    @JsonIgnore
+    public Set<Score> getScore(){
+        return this.scores;
     }
     /*
     public List<Player> getPlayers() {

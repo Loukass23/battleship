@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -16,12 +17,29 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRep;
     @Autowired
-    private ShipRepository shipRep;
+    private PlayerRepository playerRep;
+
+
 
     @RequestMapping("/game_view/{gamePlayerId}")
     public GamePlayer findGamePlayer(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
         return gamePlayer;
+    }
+    @RequestMapping("/leaderboard")
+    public List<Object> getleaderboard() {
+        List<Object> scoreObj = new ArrayList<>();
+
+        playerRep.findAll().stream().forEach(p -> {
+            Map<String, Object> playersScore = new HashMap<>();
+            playersScore.put("player", p.getName());
+            playersScore.put("win", p.getScore().stream().filter(s -> s.getFinalScore() == 1).collect(Collectors.counting()));
+            playersScore.put("lost", p.getScore().stream().filter(s -> s.getFinalScore() == 0).collect(Collectors.counting()));
+            playersScore.put("tied", p.getScore().stream().filter(s -> s.getFinalScore() == 0.5).collect(Collectors.counting()));
+            playersScore.put("total", p.getScore().stream().map(e-> e.getFinalScore()).reduce((double) 0, (a, b) -> a + b));
+            scoreObj.add(playersScore);
+                });
+        return scoreObj;
     }
 
     @RequestMapping("/games")
@@ -33,6 +51,7 @@ public class SalvoController {
             games.put("created", game.date.toString());
             games.put("id", game.getId());
             games.put("gamePlayers", findGamePlayersfromGame(game));
+            games.put("scores", findScoresfromGame(game));
             gamesObj.add(games);
         });
 return gamesObj;
@@ -44,7 +63,7 @@ return gamesObj;
         game.getGamePlayers().forEach(gamePl -> {
                 Map<String, Object> gamePlayers = new HashMap<>();
                 gamePlayers.put("id", gamePl.getId());
-                gamePlayers.put("player", findPlayersfromGamePlayer(gamePl) );
+                gamePlayers.put("player", findPlayerfromGamePlayer(gamePl) );
                 gamePlayers.put("ships", findShipsfromGamePlayer(gamePl));
                 gamePlayers.put("salvoes", findSalvoesfromGamePlayer(gamePl));
                 playerObj.add(gamePlayers);
@@ -52,7 +71,7 @@ return gamesObj;
         });
         return playerObj;
     }
-    public Object findPlayersfromGamePlayer(GamePlayer gamePl){
+    public Object findPlayerfromGamePlayer(GamePlayer gamePl){
         Player player = gamePl.getPlayer();
         Map<String, Object> myplayer = new HashMap<>();
         myplayer.put("id", player.getId());
@@ -73,7 +92,6 @@ return gamesObj;
     public List<Object> findSalvoesfromGamePlayer(GamePlayer gamePl){
         List<Object> salvoObj = new ArrayList<>();
         gamePl.getSalvoes().stream().forEach(salvo -> {
-            System.out.println(salvo.getSalvoesLocations());
             Map<String, Object> salvoes = new HashMap<>();
             salvoes.put("turn", salvo.getTurn());
             salvoes.put("salvoes_location",salvo.getSalvoesLocations());
@@ -81,5 +99,16 @@ return gamesObj;
         });
         return salvoObj;
     }
+    public List<Object> findScoresfromGame(Game game){
+        List<Object> scoreObj = new ArrayList<>();
+        game.getScore().stream().forEach(score -> {
+            Map<String, Object> scores = new HashMap<>();
+            scores.put("Player", score.getPlayer());
+            scores.put("Score",score.getFinalScore());
+            scoreObj.add(scores);
+        });
+        return scoreObj;
+    }
+
 
 }

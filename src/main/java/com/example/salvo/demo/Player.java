@@ -2,8 +2,10 @@ package com.example.salvo.demo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import static java.util.stream.Collectors.toList;
 
 @Entity
@@ -18,6 +20,9 @@ public class Player {
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
     
     public Player() { }
 
@@ -26,31 +31,14 @@ public class Player {
         this.lastName = last;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
+    @JsonIgnore
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String toString() {
         return firstName + " " + lastName;
     }
-
-
-    /*public void addPlayer(GamePlayer gamePlayer) {
-        gamePlayer.setPlayer(this);
-        gamePlayers.add(gamePlayer);
-    }*/
 
     public long getId(){
         return this.id;
@@ -59,9 +47,15 @@ public class Player {
         return this.firstName+" "+this.lastName;
     }
 
-    /*@JsonIgnore
+    @JsonIgnore
     public List<Game> getGames() {
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
-    }*/
+    }
+    public Score getScore(Game game){
+        return this.scores.stream().filter(p -> p.getGame().equals(game)).findFirst().orElse(null);
+    }
+    public Set<Score> getScore(){
+        return this.scores;
+    }
 
 }

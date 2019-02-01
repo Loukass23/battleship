@@ -18,7 +18,8 @@ public class DemoApplication {
 
 	@Bean
 	public CommandLineRunner initData(PlayerRepository playerRep, GameRepository gameRep,
-									  GamePlayerRepository gamePlayerRep, ShipRepository shipRep, SalvoRepository salvRep ) {
+									  GamePlayerRepository gamePlayerRep, ShipRepository shipRep,
+									  SalvoRepository salvRep, ScoreRepository scoreRep ) {
 		return (args) -> {
 
 
@@ -125,6 +126,13 @@ public class DemoApplication {
 			gp1.addSalvo(salv3);
 			salvRep.save(salv3);
 			gamePlayerRep.save(gp1);
+
+			Score scr1 = new Score(g1,p1, (double) 1);
+			scoreRep.save(scr1);
+			Score scr2 = new Score(g1,p2, (double) 0);
+			scoreRep.save(scr2);
+			Score scr3 = new Score(g2,p1, 0.5);
+			scoreRep.save(scr3);
 /*
 			GamePlayer gp3 = new GamePlayer(g2, p3);
 			gamePlayerRep.save(gp3);

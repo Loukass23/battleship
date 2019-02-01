@@ -1,13 +1,32 @@
 let url = '/api/games'
 fetchJson(url);
-let gameGrid = {
-  horizontal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  vertical: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+
+function fetchJson(url) {
+  return fetch(url).then(function (response) {
+      if (response.ok) {
+        return response.json();
+      }
+    }).then(function (json) {
+
+      renderTable(json)
+    })
+    .catch(function (error) {
+      console.log(error.message);
+    });
 }
-buildGameTable(gameGrid)
+
+function renderTable(data) {
+  renderHeaders(data);
+  renderRows(data);
+}
+
+
+
+
+
 
 function getHeadersHtml() {
-  return "<tr><th>Game</th><th>Date</th></tr>";
+  return "<tr><th>Game</th><th>Date</th><th>Player 1</th><th>Player 2</th></tr>";
 }
 
 function renderHeaders(data) {
@@ -32,24 +51,9 @@ function renderRows(data) {
   document.getElementById("table-rows").innerHTML = html;
 }
 
-function renderTable(data) {
-  renderHeaders(data);
-  renderRows(data);
-}
 
-function fetchJson(url) {
-  return fetch(url).then(function (response) {
-      if (response.ok) {
-        return response.json();
-      }
-    }).then(function (json) {
 
-      renderTable(json)
-    })
-    .catch(function (error) {
-      console.log(error.message);
-    });
-}
+
 
 function renderTable(data) {
   renderHeaders(data);
