@@ -25,7 +25,7 @@ function fetchJson(url) {
             json.ships.forEach(e => shipLocations = shipLocations.concat(e.locations))
             json.salvoes.forEach(e => salvoesLocations = salvoesLocations.concat(e))
             json.opponentSalvoes.forEach(e => opponentSalvoesLocations = opponentSalvoesLocations.concat(e))
-            setPlayer(json.player.name)
+            setPlayer(json.player.username)
             buildGameGrid(gameGrid, 'fleet-grid')
             buildGameGrid(gameGrid, 'fired-grid')
             // buildGameTableFired(gameGrid)

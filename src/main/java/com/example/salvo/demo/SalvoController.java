@@ -32,7 +32,7 @@ public class SalvoController {
 
         playerRep.findAll().stream().forEach(p -> {
             Map<String, Object> playersScore = new HashMap<>();
-            playersScore.put("player", p.getName());
+            playersScore.put("player", p.getUsername());
             playersScore.put("win", p.getScore().stream().filter(s -> s.getFinalScore() == 1).collect(Collectors.counting()));
             playersScore.put("lost", p.getScore().stream().filter(s -> s.getFinalScore() == 0).collect(Collectors.counting()));
             playersScore.put("tied", p.getScore().stream().filter(s -> s.getFinalScore() == 0.5).collect(Collectors.counting()));
@@ -75,7 +75,7 @@ return gamesObj;
         Player player = gamePl.getPlayer();
         Map<String, Object> myplayer = new HashMap<>();
         myplayer.put("id", player.getId());
-        myplayer.put("name",player.getName());
+        myplayer.put("name",player.getUsername());
         return myplayer;
     }
     public List<Object> findShipsfromGamePlayer(GamePlayer gamePl){

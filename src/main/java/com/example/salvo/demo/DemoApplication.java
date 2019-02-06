@@ -1,23 +1,41 @@
 package com.example.salvo.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.web.context.WebApplicationContext;
+
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @SpringBootApplication
-public class DemoApplication {
+public class DemoApplication extends SpringBootServletInitializer  {
+
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRep, GameRepository gameRep,
+	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRep,
 									  GamePlayerRepository gamePlayerRep, ShipRepository shipRep,
 									  SalvoRepository salvRep, ScoreRepository scoreRep ) {
 		return (args) -> {
@@ -29,14 +47,17 @@ public class DemoApplication {
 
 
 
-			Player p1 = new Player("Jack", "Bauer");
-			Player p2 = new Player("Chloe", "O'Brian" );
-			Player p3 = new Player("Kim", "Bauer");
-			Player p4 = new Player("Tony", "Almeida");
-			playerRep.save(p1);
-			playerRep.save(p2);
-			playerRep.save(p3);
-			playerRep.save(p4);
+			Player p1 = new Player("Jack Bauer");
+			Player p2 = new Player("Chloe O'Brian" );
+			Player p3 = new Player("Kim Bauer");
+			Player p4 = new Player("Tony Almeida");
+			p1.setPassword("123");
+			Player p5 = new Player("Lucas", "123");
+			playerRepository.save(p1);
+			playerRepository.save(p2);
+			playerRepository.save(p3);
+			playerRepository.save(p4);
+			playerRepository.save(p5);
 
 			Game g1 = new Game(date);
 			Game g2 = new Game(date1h);
@@ -133,23 +154,53 @@ public class DemoApplication {
 			scoreRep.save(scr2);
 			Score scr3 = new Score(g2,p1, 0.5);
 			scoreRep.save(scr3);
-/*
-			GamePlayer gp3 = new GamePlayer(g2, p3);
-			gamePlayerRep.save(gp3);
-
-			GamePlayer gp4 = new GamePlayer(g2, p4);
-			gamePlayerRep.save(gp4);
-
-			GamePlayer gp5 = new GamePlayer(g3, p1);
-			gamePlayerRep.save(gp5);
-
-			GamePlayer gp6 = new GamePlayer(g3, p3);
-			gamePlayerRep.save(gp6);*/
-
-
-
-
 		};
 	}
 }
 
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+	@Autowired
+	private PlayerRepository playerRepository;
+		@Bean
+		UserDetailsService userDetailsService() {
+			return new UserDetailsService() {
+
+				@Override
+				public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+					Player player = playerRepository.findByUsername(username);
+					//System.out.println(player.getId());
+					if(player != null) {
+						return new User(player.getUsername(), player.getPassword(), true, true, true, true,
+								AuthorityUtils.createAuthorityList("USER"));
+					} else {
+						throw new UsernameNotFoundException("could not find the player '"
+								+ username + "'");
+					}
+				}
+
+			};
+		}
+	}
+
+
+@EnableWebSecurity
+@Configuration
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Autowired
+	private WebApplicationContext applicationContext;
+	private WebSecurityConfiguration webSecurityConfiguration;
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+				.authorizeRequests()
+				.antMatchers("/", "/rest/games").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.formLogin()
+				.and()
+				.httpBasic();
+	}
+}

@@ -1,4 +1,5 @@
 package com.example.salvo.demo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
@@ -47,10 +48,12 @@ public class Score {
 
     public Double getFinalScore(){return this.score;}
 
+    @JsonIgnore
     public Game getGame() {
         return this.game;
     }
 
+    @JsonIgnore
     public Player getPlayer() {
         return this.player;
     }
