@@ -57,6 +57,13 @@ public class SalvoController {
         return scoreObj;
     }
 
+    @RequestMapping("/players")
+    public Map<String, Object> getPlayers() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("player",loggedPlayer());
+        map.put("players",playerRep.findAll());
+        return map;
+    }
     @RequestMapping("/games")
     public Map<String, Object> getGames() {
 

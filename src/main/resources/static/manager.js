@@ -34,14 +34,14 @@ $.post("/api/players", { username: usrname, password: pwd })
   // code to post a new player using AJAX
   // on success, reload and display the updated data from the server
 
-  function postPlayer(userName, password) {
+  function postPlayer(username, password) {
     $.post({
       headers: {
           'Content-Type': 'application/json'
       },
       dataType: "text",
-      url: "api/players",
-      data: JSON.stringify({ "userName": userName , "password": password })
+      url: "api/player",
+      data: JSON.stringify({ "username": username , "password": password })
 
     })
     .done(function( ) {

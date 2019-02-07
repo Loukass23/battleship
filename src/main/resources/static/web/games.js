@@ -56,6 +56,6 @@ function renderTable(data) {
 function logout() {
 
   $.post("/api/logout")
-    .done()
+    .done(()=> this.logged )
     .fail();
 }

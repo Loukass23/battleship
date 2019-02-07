@@ -19,21 +19,24 @@
                 <ul class="nav navbar-nav">
                     <li ><a href="home.html">Home</a></li>
                     <li class="active"><a href="games.html">Games</a></li>
-                    <li><a href="#">Page 2</a></li>
+                    <li><a href="players.html">Players</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <div v-if="loggedUser">
-                            {{loggedUser.username}}
-                            <button v-on:click="logout">Log out</button>
-                        </div>
-                        <div v-else>
-                            <form class="form-inline" id="login-form">
-                                <label>Username: <input type="text" name="username"></label>
-                                <label>Password: <input type="text" name="password"></label>
-                                <button v-on:click="login">Log In </button>
-                            </form>
-                        </div>
+                            <div v-if="loggedUser">
+                                    <form class="form-inline">
+                                           {{loggedUser.username}}
+                                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="logout">Log out</button>
+                                          </form>
+                            </div>
+                            <div v-else>
+                                    <form class="form-inline" id="login-form">
+                                            <input class="form-control mr-sm-2" type="text" name="username"  placeholder="username" aria-label="Username">
+                                            <input class="form-control mr-sm-2" type="password" name="password"  placeholder="password" aria-label="Password">
+                                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="login">Log In</button>
+                                          </form>
+                               
+                            </div>
                     </li>
                 </ul>
             </div>
