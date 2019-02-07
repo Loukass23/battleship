@@ -9,6 +9,8 @@ function fetchJson(url) {
     }).then(function (json) {
 
       renderTable(json)
+      setUsername(json[0])
+
     })
     .catch(function (error) {
       console.log(error.message);
@@ -20,8 +22,9 @@ function renderTable(data) {
   renderRows(data);
 }
 
-
-
+function setUsername(user){
+  document.getElementById('username').innerHTML = user.username
+}
 
 
 
@@ -34,15 +37,10 @@ function renderHeaders(data) {
   document.getElementById("table-headers").innerHTML = html;
 }
 
-function getColumnsHtml(row) {
-  return row.map(function (element) {
-    return "<td>" + element.id + "</td><td>" + element.created + "</td>";
-  }).join("")
-}
 
 function getRowsHtml(data) {
-  return data.map(element => {
-    return "<tr><td>" + element.id + "</td><td>" + element.created + "</td></tr>"
+  return data.map((element, index) => {
+    if (index !=0) return "<tr><td>" + element.id + "</td><td>" + element.created + "</td></tr>"
   })
 }
 
@@ -51,11 +49,13 @@ function renderRows(data) {
   document.getElementById("table-rows").innerHTML = html;
 }
 
-
-
-
-
 function renderTable(data) {
   renderHeaders(data);
   renderRows(data);
+}
+function logout() {
+
+  $.post("/api/logout")
+    .done()
+    .fail();
 }

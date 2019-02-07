@@ -4,28 +4,49 @@
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <meta charset="UTF-8">
+
+
     <title>Games</title>
 </head>
 
 <body>
-<h1>Games</h1>
-<div class="container">
-    <table class="table">
-        <thead id="table-headers">
-        </thead>
-        <tbody id="table-rows">
-        </tbody>
-    </table>
-    <table class="table table-bordered">
-        <thead id="game-table-header">
+    <div id="app">
+        <div class="container" v-if="loggedUser"> 
+        {{loggedUser.username}}
+  <button v-on:click="logout">Log out</button>   
+    </div>
+    <div v-else>
+            <form id="login-form" >
+                    <label>Username: <input type="text" name="username"></label>
+                    <label>Password: <input type="text" name="password"></label>
+                    <button v-on:click="login">Log In </button>
+                </form>
+    </div>
 
-        </thead>
-        <tbody id="game-table">
+    <h1>Games</h1>
+    <div class="container">
+        <table class="table">
+            <thead id="table-headers">
+            </thead>
+            <tbody id="table-rows">
+                <div v-for="game in games" :key="game.id">
+                    {{ game }}
+                </div>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead id="game-table-header">
+            </thead>
+            <tbody id="game-table">
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
-<script type="text/javascript" src="games.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="games2.js"></script>
 </body>
 
 </html>

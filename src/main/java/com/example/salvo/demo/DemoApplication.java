@@ -8,6 +8,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,10 +18,17 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.context.WebApplicationContext;
 
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,11 +55,11 @@ public class DemoApplication extends SpringBootServletInitializer  {
 
 
 
-			Player p1 = new Player("Jack Bauer");
-			Player p2 = new Player("Chloe O'Brian" );
+			Player p1 = new Player("Jack", "123");
+			Player p2 = new Player("Brian" );
 			Player p3 = new Player("Kim Bauer");
 			Player p4 = new Player("Tony Almeida");
-			p1.setPassword("123");
+			p2.setPassword("123");
 			Player p5 = new Player("Lucas", "123");
 			playerRepository.save(p1);
 			playerRepository.save(p2);
@@ -161,11 +169,25 @@ public class DemoApplication extends SpringBootServletInitializer  {
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
+	@Override
+	public void init(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(inputName-> {
+			Player player = playerRepository.findByUsername(inputName);
+			if (player != null) {
+				return new User(player.getUsername(), player.getPassword(),
+						AuthorityUtils.createAuthorityList("USER"));
+			} else {
+				throw new UsernameNotFoundException("Unknown user: " + inputName);
+			}
+		});
+	}
+
 	@Autowired
 	private PlayerRepository playerRepository;
-		@Bean
+	/*	@Bean
 		UserDetailsService userDetailsService() {
 			return new UserDetailsService() {
+
 
 				@Override
 				public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -182,7 +204,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 				}
 
 			};
-		}
+		}*/
 	}
 
 
@@ -195,12 +217,47 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+				.csrf().disable()
 				.authorizeRequests()
-				.antMatchers("/", "/rest/games").permitAll()
-				.anyRequest().authenticated()
+                .antMatchers("/").permitAll()
+				.antMatchers("/web/home*").permitAll()
+                .antMatchers("/api/games").permitAll()
+                .antMatchers("/api/login*").permitAll()
+				.antMatchers("/web/games*").permitAll()
+                .antMatchers("/**").hasAuthority("USER")
+                .anyRequest().authenticated()
 				.and()
 				.formLogin()
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.loginPage("/api/login")
 				.and()
-				.httpBasic();
+				.logout()
+				.logoutUrl("/api/logout");
+
+		// if user is not authenticated, just send an authentication failure response
+		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		// if login is successful, just clear the flags asking for authentication
+		http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+
+		// if login fails, just send an authentication failure response
+		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		// if logout is successful, just send a success response
+		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 	}
+
+	private void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+		}
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+
 }

@@ -1,9 +1,16 @@
 package com.example.salvo.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,11 +27,21 @@ public class SalvoController {
     private PlayerRepository playerRep;
 
 
+    @RequestMapping("/login")
+    public Player loggedPlayer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return playerRep.findByUsername(authentication.getName());
+        }
+        else return null;
+    }
+
 
     @RequestMapping("/game_view/{gamePlayerId}")
     public GamePlayer findGamePlayer(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
-        return gamePlayer;
+        if(gamePlayerId == loggedPlayer().getId()) return gamePlayer;
+        else return  null;
     }
     @RequestMapping("/leaderboard")
     public List<Object> getleaderboard() {
@@ -46,6 +63,7 @@ public class SalvoController {
     public List<Object> getGames() {
 
         List<Object> gamesObj = new ArrayList<>();
+        gamesObj.add(loggedPlayer());
         gameRep.findAll().stream().forEach(game -> {
             Map<String, Object> games = new HashMap<>();
             games.put("created", game.date.toString());
@@ -56,6 +74,25 @@ public class SalvoController {
         });
 return gamesObj;
     }
+
+   /* @RequestMapping(value = "/players")
+    public ResponseEntity<Player> get(String userName, String password)  {
+        System.out.println(userName);
+        Player player = new Player();
+        player.setUsername(userName);
+        player.setPassword(password);
+
+        return new ResponseEntity<Player>(player, HttpStatus.OK);
+    }
+    @RequestMapping(value = "/players", method = RequestMethod.POST)
+    public ResponseEntity<Player> update(@RequestBody Player player) {
+
+        if (player != null) {
+            player.setUsername(userName);
+        }
+        return new ResponseEntity<Player>(player, HttpStatus.OK);
+    }*/
+
 
 
     public List<Object> findGamePlayersfromGame(Game game){
@@ -108,6 +145,26 @@ return gamesObj;
             scoreObj.add(scores);
         });
         return scoreObj;
+    }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @RequestMapping(path = "/player", method = RequestMethod.POST)
+    public ResponseEntity<Object> register(
+
+            @RequestParam String username, @RequestParam String password) {
+
+        if ( username.isEmpty() || password.isEmpty()) {
+            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        }
+
+        if (playerRep.findByUsername(username) !=  null) {
+            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+        }
+
+        playerRep.save(new Player( username, passwordEncoder.encode(password)));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 

@@ -31,10 +31,15 @@ function fetchJson(url) {
             // buildGameTableFired(gameGrid)
         })
         .catch(error => {
+            unauthorizedUser()
             console.log(error.message);
         });
 }
 
+function unauthorizedUser() {
+    document.getElementById('content').innerHTML = "<h1>Unauthorized Player</h1>"
+
+}
 
 function buildGameGrid(gameGrid, gridType) {
     let fleetGrid = document.getElementById(gridType)
