@@ -2,7 +2,6 @@ package com.example.salvo.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,10 +58,10 @@ public class SalvoController {
     }
 
     @RequestMapping("/games")
-    public List<Object> getGames() {
+    public Map<String, Object> getGames() {
 
         List<Object> gamesObj = new ArrayList<>();
-        gamesObj.add(loggedPlayer());
+
         gameRep.findAll().stream().forEach(game -> {
             Map<String, Object> games = new HashMap<>();
             games.put("created", game.date.toString());
@@ -72,7 +70,10 @@ public class SalvoController {
             games.put("scores", findScoresfromGame(game));
             gamesObj.add(games);
         });
-return gamesObj;
+        Map<String, Object> map = new HashMap<>();
+        map.put("player",loggedPlayer());
+        map.put("games",gamesObj);
+return map;
     }
 
    /* @RequestMapping(value = "/players")

@@ -11,41 +11,60 @@
 
 <body>
     <div id="app">
-        <div class="container" v-if="loggedUser"> 
-        {{loggedUser.username}}
-  <button v-on:click="logout">Log out</button>   
-    </div>
-    <div v-else>
-            <form id="login-form" >
-                    <label>Username: <input type="text" name="username"></label>
-                    <label>Password: <input type="text" name="password"></label>
-                    <button v-on:click="login">Log In </button>
-                </form>
-    </div>
-
-    <h1>Games</h1>
-    <div class="container">
-        <table class="table">
-            <thead id="table-headers">
-            </thead>
-            <tbody id="table-rows">
-                <div v-for="game in games" :key="game.id">
-                    {{ game }}
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Battleship</a>
                 </div>
-            </tbody>
-        </table>
-        <table class="table table-bordered">
-            <thead id="game-table-header">
-            </thead>
-            <tbody id="game-table">
+                <ul class="nav navbar-nav">
+                    <li ><a href="home.html">Home</a></li>
+                    <li class="active"><a href="games.html">Games</a></li>
+                    <li><a href="#">Page 2</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <div v-if="loggedUser">
+                            {{loggedUser.username}}
+                            <button v-on:click="logout">Log out</button>
+                        </div>
+                        <div v-else>
+                            <form class="form-inline" id="login-form">
+                                <label>Username: <input type="text" name="username"></label>
+                                <label>Password: <input type="text" name="password"></label>
+                                <button v-on:click="login">Log In </button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-            </tbody>
-        </table>
+        <h1>Games</h1>
+        <div class="container">
+            <table class="table">
+                <thead id="table-headers">
+                </thead>
+                <tbody id="table-rows">
+
+                    <tr v-for="game in games" :key="game.id">
+                        <td>{{ game.id }}</td>
+                        <td>{{game.created}}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <table class="table table-bordered">
+                <thead id="game-table-header">
+                </thead>
+                <tbody id="game-table">
+
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="games2.js"></script>
 </body>
 
