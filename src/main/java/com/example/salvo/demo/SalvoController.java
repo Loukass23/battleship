@@ -23,6 +23,8 @@ public class SalvoController {
     private GamePlayerRepository gamePlayerRep;
     @Autowired
     private PlayerRepository playerRep;
+    @Autowired
+    private ShipRepository shipRep;
 
 
     @RequestMapping("/login")
@@ -38,7 +40,7 @@ public class SalvoController {
     @RequestMapping("/game_view/{gamePlayerId}")
     public GamePlayer findGamePlayer(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
-        if(gamePlayerId == loggedPlayer().getId()) return gamePlayer;
+        if(loggedPlayer().gamePlayers.stream().anyMatch(e -> e == gamePlayer)) return gamePlayer;
         else return  null;
     }
     @RequestMapping("/game/{gameId}")
@@ -195,6 +197,23 @@ return map;
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Object> addShips( @RequestParam List<Object> shipsObj, @PathVariable Long gameplayerId){
+
+    GamePlayer gamePlayer = gamePlayerRep.findOne(gameplayerId);
+    if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
+        System.out.println(shipsObj.toString());
+        shipsObj.stream().forEach(e -> {
+            System.out.println(e.toString());
+           /* Ship ship = new Ship(e.getType(), e.getLocations());
+            shipRep.save(ship);
+            gamePlayer.addShip(ship);
+            gamePlayerRep.save(gamePlayer);
+            shipRep.save(ship);*/
+        } );
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @RequestMapping(path = "/game/{gameId}/player", method = RequestMethod.POST)
     public ResponseEntity<Object> addPlayer(String playerName, @PathVariable Long gameId){
         if ( playerName.isEmpty()) {
@@ -202,10 +221,9 @@ return map;
         }
         Player player = playerRep.findByUsername(playerName);
         Game game = gameRep.findOne(gameId);
-       /* game.getGamePlayers().stream().forEach(e ->{
-           if(player.equals(e.getPlayer())) return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);;
 
-        });*/
+        if(game.getGamePlayers().stream().count() >= 2) return new ResponseEntity<>("Too many players", HttpStatus.FORBIDDEN);
+        if(game.getGamePlayers().stream().anyMatch(e -> e.getPlayer() == player)) return new ResponseEntity<>("Player already in game", HttpStatus.FORBIDDEN);
 
 
         GamePlayer gamePlayer = new GamePlayer(game , player);

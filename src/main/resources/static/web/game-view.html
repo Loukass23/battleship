@@ -2,45 +2,73 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="game-view.css">
     <meta charset="UTF-8">
-    <title>Games View</title>
+
+
+    <title>Players</title>
 </head>
 
 <body>
-    <div class="container" id="content">
-        <h1>Game View</h1>
-        <h2 id="playerName"></h2>
+    <div id="app">
+        <nav class="navbar">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Battleship</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="games.html">Games</a></li>
+                    <li class="active"><a href="players.html">Players</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <div v-if="loggedUser">
+                        <form class="form-inline">
+                            {{loggedUser.username}}
+                        </form>
+                    </div>
 
-        <div class="container" id="fleet-grid">
-            <h3>Fleet Grid</h3>
-        </div>
-        <hr>
-        <div class="container" id="fired-grid">
-            <h3>Shots Fired</h3>
-        </div>
-        <div class="container">
-
-            <table class="table table-bordered">
-                <thead id="game-table-header">
-
-                </thead>
-                <tbody id="game-table">
-
-                </tbody>
-            </table>
-            <table class="table table-bordered">
-                <thead id="game-table-header-fired">
-
-                </thead>
-                <tbody id="game-table-fired">
-
-                </tbody>
-            </table>
-        </div>
+            </div>
+            </li>
+            </ul>
     </div>
-    <script type="text/javascript" src="game_view.js"></script>
+    </nav>
+    <h1>Game View</h1>
+    <h2 id="playerName"></h2>
+
+    <div class="container" id="fleet-grid">
+        <h3>Fleet Grid</h3>
+    </div>
+    <hr>
+    <div class="container" id="fired-grid">
+        <h3>Shots Fired</h3>
+    </div>
+    <div class="container">
+
+        <table class="table table-bordered">
+            <thead id="game-table-header">
+
+            </thead>
+            <tbody id="game-table">
+
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead id="game-table-header-fired">
+
+            </thead>
+            <tbody id="game-table-fired">
+
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="game_view2.js"></script>
 </body>
 
 </html>

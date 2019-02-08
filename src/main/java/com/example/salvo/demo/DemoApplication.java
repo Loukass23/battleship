@@ -102,7 +102,7 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			shipRep.save(s2);
 			shipRep.save(s3);
 			gamePlayerRep.save(gp1);
-
+			System.out.println(gp1.getShips());
             //Ships Player 2
 			List<String> shipLocation4 = new ArrayList<String>();;
 			shipLocation4.add("I8");
@@ -205,7 +205,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/game*").permitAll()
                 .antMatchers("/api/login*").permitAll()
 				.antMatchers("/web/game*").permitAll()
-                .antMatchers("/**").hasAuthority("USER")
+				.antMatchers("/api/games/players*").permitAll()
+				.antMatchers("/web/game-view*").permitAll()
+				.antMatchers("/**").hasAuthority("USER")
                 .anyRequest().authenticated()
 				.and()
 				.formLogin()
