@@ -2,7 +2,7 @@ new Vue({
     el: '#app',
     data: {
       url: '/api/games',
-      loggedUser: null,
+      loggedUser: [],
       games: [],
       players:[]
     },
@@ -75,7 +75,24 @@ new Vue({
             });
           }
           else alert('You must be logged in to add games!')
-        }
+        },
+        addPlayertoGame(gameID) {
+          if(this.loggedUser){
+            $.post("/api/game/"+gameID+"/player", {
+                playerName: this.loggedUser.username
+              })
+              .done(function () {
+                console.log("Player added to game"+ gameID);
+                location.reload();
+          
+          
+              })
+              .fail(function () {
+                console.log("failed to add player to game");
+              });
+            }
+            else alert('You must be logged in to join a game!')
+          }
     },
   
     created() {

@@ -17,27 +17,29 @@
                     <a class="navbar-brand" href="#">Battleship</a>
                 </div>
                 <ul class="nav navbar-nav">
-                    <li ><a href="home.html">Home</a></li>
+                    <li><a href="home.html">Home</a></li>
                     <li class="active"><a href="games.html">Games</a></li>
                     <li><a href="players.html">Players</a></li>
                     <li><a href="leaderboard.html">Leaderboard</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                            <div v-if="loggedUser">
-                                    <form class="form-inline">
-                                           {{loggedUser.username}}
-                                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="logout">Log out</button>
-                                          </form>
-                            </div>
-                            <div v-else>
-                                    <form class="form-inline" id="login-form">
-                                            <input class="form-control mr-sm-2" type="text" name="username"  placeholder="username" aria-label="Username">
-                                            <input class="form-control mr-sm-2" type="password" name="password"  placeholder="password" aria-label="Password">
-                                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="login">Log In</button>
-                                          </form>
-                               
-                            </div>
+                        <div v-if="loggedUser">
+                            <form class="form-inline">
+                                {{loggedUser.username}}
+                                <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="logout">Log out</button>
+                            </form>
+                        </div>
+                        <div v-else>
+                            <form class="form-inline" id="login-form">
+                                <input class="form-control mr-sm-2" type="text" name="username" placeholder="username"
+                                    aria-label="Username">
+                                <input class="form-control mr-sm-2" type="password" name="password" placeholder="password"
+                                    aria-label="Password">
+                                <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="login">Log In</button>
+                            </form>
+
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -47,18 +49,22 @@
         <div class="container">
             <table class="table table-hover">
                 <thead>
-                    <td>Game ID</td>
+                    <td>Game</td>
                     <td>Start Date</td>
-                    <td>Player 1</td>
-                    <td>Player 2</td>
+                    <td>Players</td>
+
                 </thead>
-                <tbody >
-                    <tr v-for="(game, index) in games" :key="game.id"v-on:click="selectGame(game.id)">
+                <tbody>
+                    <tr v-for="(game, index) in games" :key="game.id">
                         <td>{{ game.id }}</td>
-                        <td>{{game.created}}</td> 
-                        <td>{{players[index].player_1}}</td> 
-                        <td>{{players[index].player_2}}</td> 
-                        
+                        <td>{{game.created}}</td>
+                        <td>{{players[index].player_1}} VS {{players[index].player_2}}</td>
+                        <td v-if="loggedUser">
+                            <button v-if="players[index].player_1 != loggedUser.username && players[index].player_2 =='-'"
+                                class="btn btn-outline-success my-2 my-sm-0" v-on:click="addPlayertoGame(game.id)">Join</button>
+                            <button v-if="players[index].player_1 == loggedUser.username || players[index].player_2 == loggedUser.username"
+                                class="btn btn-outline-success my-2 my-sm-0" v-on:click="selectGame(game.id)">Resume</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

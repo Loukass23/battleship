@@ -181,7 +181,6 @@ return map;
 
             @RequestParam  String playerName) {
         Date date = new Date();
-        System.out.println(playerName);
         if ( playerName.isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
@@ -196,5 +195,25 @@ return map;
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @RequestMapping(path = "/game/{gameId}/player", method = RequestMethod.POST)
+    public ResponseEntity<Object> addPlayer(String playerName, @PathVariable Long gameId){
+        if ( playerName.isEmpty()) {
+            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        }
+        Player player = playerRep.findByUsername(playerName);
+        Game game = gameRep.findOne(gameId);
+       /* game.getGamePlayers().stream().forEach(e ->{
+           if(player.equals(e.getPlayer())) return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);;
+
+        });*/
+
+
+        GamePlayer gamePlayer = new GamePlayer(game , player);
+        gamePlayerRep.save(gamePlayer);
+        game.addGamePlayer(gamePlayer);
+        gameRep.save(game);
+        gamePlayerRep.save(gamePlayer);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
 }

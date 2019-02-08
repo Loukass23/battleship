@@ -36,7 +36,7 @@ public class Game {
         return date.toString();
     }
 
-    public void addGame(GamePlayer gamePlayer) {
+    public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setGame(this);
         gamePlayers.add(gamePlayer);
     }
