@@ -56,7 +56,7 @@ public class DemoApplication extends SpringBootServletInitializer  {
 
 
 			Player p1 = new Player("Jack", "123");
-			Player p2 = new Player("Brian" );
+			Player p2 = new Player("Brian","123" );
 			Player p3 = new Player("Kim Bauer");
 			Player p4 = new Player("Tony Almeida");
 			p2.setPassword("123");
@@ -184,27 +184,6 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
 	@Autowired
 	private PlayerRepository playerRepository;
-	/*	@Bean
-		UserDetailsService userDetailsService() {
-			return new UserDetailsService() {
-
-
-				@Override
-				public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-					Player player = playerRepository.findByUsername(username);
-					//System.out.println(player.getId());
-					if(player != null) {
-						return new User(player.getUsername(), player.getPassword(), true, true, true, true,
-								AuthorityUtils.createAuthorityList("USER"));
-					} else {
-						throw new UsernameNotFoundException("could not find the player '"
-								+ username + "'");
-					}
-				}
-
-			};
-		}*/
 	}
 
 
@@ -223,9 +202,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/web/home*").permitAll()
 				.antMatchers("/web/players*").permitAll()
 				.antMatchers("/api/players").permitAll()
-				.antMatchers("/api/games").permitAll()
+				.antMatchers("/api/game*").permitAll()
                 .antMatchers("/api/login*").permitAll()
-				.antMatchers("/web/games*").permitAll()
+				.antMatchers("/web/game*").permitAll()
                 .antMatchers("/**").hasAuthority("USER")
                 .anyRequest().authenticated()
 				.and()

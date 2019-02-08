@@ -41,6 +41,26 @@ public class SalvoController {
         if(gamePlayerId == loggedPlayer().getId()) return gamePlayer;
         else return  null;
     }
+    @RequestMapping("/game/{gameId}")
+    public Map<String, Object>findGame(@PathVariable Long gameId) {
+        Game game = gameRep.findOne(gameId);
+        Map<String, Object> map = new HashMap<>();
+        if(game.getPlayers().contains(loggedPlayer())) {
+            map.put("player",loggedPlayer());
+            map.put("game",game);
+            map.put("error",null);
+            return map;
+
+        }
+        else    {
+            map.put("player",loggedPlayer());
+            map.put("error",new ResponseEntity<String>("Unauthorized PLayer", HttpStatus.FORBIDDEN ));
+            return map;
+
+        }
+
+    }
+
     @RequestMapping("/leaderboard")
     public List<Object> getleaderboard() {
         List<Object> scoreObj = new ArrayList<>();
@@ -82,24 +102,6 @@ public class SalvoController {
         map.put("games",gamesObj);
 return map;
     }
-
-   /* @RequestMapping(value = "/players")
-    public ResponseEntity<Player> get(String userName, String password)  {
-        System.out.println(userName);
-        Player player = new Player();
-        player.setUsername(userName);
-        player.setPassword(password);
-
-        return new ResponseEntity<Player>(player, HttpStatus.OK);
-    }
-    @RequestMapping(value = "/players", method = RequestMethod.POST)
-    public ResponseEntity<Player> update(@RequestBody Player player) {
-
-        if (player != null) {
-            player.setUsername(userName);
-        }
-        return new ResponseEntity<Player>(player, HttpStatus.OK);
-    }*/
 
 
 
@@ -158,7 +160,7 @@ return map;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @RequestMapping(path = "/player", method = RequestMethod.POST)
+    @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
 
             @RequestParam String username, @RequestParam String password) {
@@ -172,6 +174,25 @@ return map;
         }
 
         playerRep.save(new Player( username, passwordEncoder.encode(password)));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
+    public ResponseEntity<Object> registerGame(
+
+            @RequestParam  String playerName) {
+        Date date = new Date();
+        System.out.println(playerName);
+        if ( playerName.isEmpty()) {
+            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        }
+
+        Player player = playerRep.findByUsername(playerName);
+        if (player ==  null) {
+            return new ResponseEntity<>("Unknown User", HttpStatus.FORBIDDEN);
+        }
+        Game game = new Game( date);
+        gameRep.save(game);
+        gamePlayerRep.save(new GamePlayer(game , player));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

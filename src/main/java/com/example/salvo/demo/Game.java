@@ -5,7 +5,10 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -42,6 +45,14 @@ public class Game {
         return this.id;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
     @JsonIgnore
     public Set<GamePlayer> getGamePlayers(){
         return this.gamePlayers;
@@ -50,9 +61,9 @@ public class Game {
     public Set<Score> getScore(){
         return this.scores;
     }
-    /*
+
     public List<Player> getPlayers() {
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
-    }*/
+    }
 
 }

@@ -20,6 +20,7 @@
                     <li ><a href="home.html">Home</a></li>
                     <li class="active"><a href="games.html">Games</a></li>
                     <li><a href="players.html">Players</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -44,31 +45,31 @@
 
         <h1>Games</h1>
         <div class="container">
-            <table class="table">
-                <thead id="table-headers">
+            <table class="table table-hover">
+                <thead>
+                    <td>Game ID</td>
+                    <td>Start Date</td>
+                    <td>Player 1</td>
+                    <td>Player 2</td>
                 </thead>
-                <tbody id="table-rows">
-
-                    <tr v-for="game in games" :key="game.id">
+                <tbody >
+                    <tr v-for="(game, index) in games" :key="game.id"v-on:click="selectGame(game.id)">
                         <td>{{ game.id }}</td>
-                        <td>{{game.created}}</td>
+                        <td>{{game.created}}</td> 
+                        <td>{{players[index].player_1}}</td> 
+                        <td>{{players[index].player_2}}</td> 
+                        
                     </tr>
-
                 </tbody>
             </table>
-            <table class="table table-bordered">
-                <thead id="game-table-header">
-                </thead>
-                <tbody id="game-table">
+            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="addGame">Add</button>
 
-                </tbody>
-            </table>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="games2.js"></script>
+    <script src="games.js"></script>
 </body>
 
 </html>
