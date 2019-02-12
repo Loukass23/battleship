@@ -38,6 +38,15 @@ public class Ship {
     public void setGamePlayer(GamePlayer gamePlayer){
         this.gamePlayer = gamePlayer;
     }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
+    }
+
     public long getId(){
         return this.id;
     }

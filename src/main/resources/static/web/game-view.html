@@ -33,42 +33,44 @@
             </div>
             </li>
             </ul>
-    </div>
-    </nav>
-    <h1>Game View</h1>
-    <h2 id="playerName"></h2>
 
-    <div class="container" id="fleet-grid">
-        <h3>Fleet Grid</h3>
-    </div>
-    <hr>
-    <div class="container" id="fired-grid">
-        <h3>Shots Fired</h3>
-    </div>
-    <div class="container">
+        </nav>
+        <h1>Game View</h1>
+        <h2 id="playerName"></h2>
 
-        <table class="table table-bordered">
-            <thead id="game-table-header">
+        <div class="container" id="fleet-grid">
+            <h3>Fleet Grid</h3>
+            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="addShip">Add Ship</button>
+        </div>
+        <hr>
+        <div class="container" id="fired-grid">
+            <h3>Shots Fired</h3>
+        </div>
+        <div class="container">
 
-            </thead>
-            <tbody id="game-table">
+            <table class="table table-bordered">
+                <thead id="game-table-header">
 
-            </tbody>
-        </table>
-        <table class="table table-bordered">
-            <thead id="game-table-header-fired">
+                </thead>
+                <tbody id="game-table">
 
-            </thead>
-            <tbody id="game-table-fired">
+                </tbody>
+            </table>
+            <table class="table table-bordered">
+                <thead id="game-table-header-fired">
 
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="game-table-fired">
+
+                </tbody>
+            </table>
+        </div>
     </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="text/javascript" src="game_view2.js"></script>
+    <script type="text/javascript" src="game_view.js"></script>
 </body>
 
 </html>

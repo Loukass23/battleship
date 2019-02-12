@@ -2,6 +2,7 @@ package com.example.salvo.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -197,20 +198,43 @@ return map;
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
-    public ResponseEntity<Object> addShips( @RequestParam List<Object> shipsObj, @PathVariable Long gameplayerId){
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<String> addShips(@PathVariable Long gamePlayerId,  @RequestBody List<Ship> ships) {
+        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
 
-    GamePlayer gamePlayer = gamePlayerRep.findOne(gameplayerId);
-    if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
-        System.out.println(shipsObj.toString());
-        shipsObj.stream().forEach(e -> {
-            System.out.println(e.toString());
-           /* Ship ship = new Ship(e.getType(), e.getLocations());
+        ships.stream().forEach(e -> {
+
+            Ship ship = new Ship(e.getType(), e.getLocations());
             shipRep.save(ship);
             gamePlayer.addShip(ship);
             gamePlayerRep.save(gamePlayer);
-            shipRep.save(ship);*/
-        } );
+            shipRep.save(ship);
+        });
+
+
+/*
+        GamePlayer gamePlayer = gamePlayerRep.findOne(gameplayerId);
+        if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
+        shipRep.save(ships);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<String> addShips( @RequestBody Ship ship, @PathVariable Long gameplayerId){
+
+    GamePlayer gamePlayer = gamePlayerRep.findOne(gameplayerId);
+    if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
+    shipRep.save(ship);
+  //  ship.setGamePlayer(gamePlayer);
+
+        shipsObj.stream().forEach(e -> { System.out.println(e.toString());
+           Ship ship = new Ship(e.getType, e.getLocations());
+            shipRep.save(ship);
+            gamePlayer.addShip(ship);
+            gamePlayerRep.save(gamePlayer);
+            shipRep.save(ship);
+        } );*/
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
