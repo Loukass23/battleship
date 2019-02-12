@@ -51,14 +51,14 @@ new Vue({
     },
     login() {
 
-      var form = document.getElementById('login-form');
 
       $.post("/api/login", {
-          username: form["username"].value,
-          password: form["password"].value
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
         })
         .done(function () {
           console.log("logged in!");
+          location.reload();
 
 
 

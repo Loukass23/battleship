@@ -31,13 +31,13 @@
                             </form>
                         </div>
                         <div v-else>
-                            <form class="form-inline" id="login-form">
-                                <input class="form-control mr-sm-2" type="text" name="username" placeholder="username"
-                                    aria-label="Username">
-                                <input class="form-control mr-sm-2" type="password" name="password" placeholder="password"
-                                    aria-label="Password">
+                            <div class="form-inline" id="login-form">
+                                <input id="username" class="form-control mr-sm-2" type="text" name="username"
+                                    placeholder="username" aria-label="Username">
+                                <input id="password" class="form-control mr-sm-2" type="password" name="password"
+                                    placeholder="password" aria-label="Password">
                                 <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="login">Log In</button>
-                            </form>
+                            </div>
 
                         </div>
                     </li>

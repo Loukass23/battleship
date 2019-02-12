@@ -10,7 +10,8 @@ new Vue({
         },
         shipLocations: [],
         salvoesLocations: [],
-        opponentSalvoesLocations: []
+        opponentSalvoesLocations: [],
+
 
     },
     methods: {
@@ -19,19 +20,18 @@ new Vue({
                 .get(url)
                 .then(response => {
                     console.log(response.data)
-                    response.data.ships.forEach(e => this.shipLocations = this.shipLocations.concat(e.locations))
+                    response.data.ships.forEach(e => this.shipLocations = this.shipLocations.concat(e))
                     response.data.salvoes.forEach(e => this.salvoesLocations = this.salvoesLocations.concat(e))
                     response.data.opponentSalvoes.forEach(e => this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(e))
                     this.buildGameGrid(this.gameGrid, 'fleet-grid')
                     this.buildGameGrid(this.gameGrid, 'fired-grid')
                     this.loggedUser = response.data.player
                     this.gamePlayerId = response.data.id
+                    console.log(this.shipLocations)
+                    console.log(this.salvoesLocations)
 
                 })
                 .catch(error => console.log(error))
-        },
-        test() {
-            console.log('test')
         },
         logout() {
 
@@ -39,26 +39,24 @@ new Vue({
                 .done(() => this.loggedUser = null)
                 .fail();
         },
-        addShip() {
-            console.log('ici')
+        addShip(typ, loc) {
+            //let shipsJson = document.getElementById('ship-form').value;
+            console.log(typ + loc)
+
             $.post({
                     url: "/api/games/players/" + this.gamePlayerId + "/ships",
                     data: JSON.stringify(
                         [{
-                                "type": "test",
-                                "locations": ["A1", "B1", "C1"]
-                            },
-                            {
-                                "type": "test boat",
-                                "locations": ["H5", "H6"]
-                            }
-                        ]
+                            "type": typ,
+                            "locations": loc
+                        }]
                     ),
                     dataType: "text",
                     contentType: "application/json"
                 })
                 .done(function () {
-                    console.log("ship added ")
+                    //this.fetchJson(this.url + this.gamePlayerId)
+
                 })
                 .fail(function () {
                     console.log("fail to add ship")
@@ -97,14 +95,15 @@ new Vue({
                     let cellId = gameGrid.vertical[i] + gameGrid.horizontal[j]
                     column.setAttribute('id', cellId)
 
-                    if (gridType == 'fleet-grid') {
 
-                        this.isShip(cellId) ? column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-primary' : column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0'
-                        if (this.isHit(cellId)) {
-                            column.innerHTML = this.isHit(cellId)
-                            column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-danger'
-                        }
-                    }
+                    // if (gridType == 'fleet-grid') {
+
+                    //     this.isShip(cellId) ? column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-primary' : column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0'
+                    //     if (this.isHit(cellId)) {
+                    //         column.innerHTML = this.isHit(cellId)
+                    //         column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0 bg-danger'
+                    //     }
+                    // }
                     if (gridType == 'fired-grid') {
                         column.className = 'col-sm-1 border px-0 py-0 mx-0 my-0'
                         if (this.isFired(cellId) != null) {
@@ -120,7 +119,9 @@ new Vue({
             }
         },
         isShip(cell) {
-            return this.shipLocations.includes(cell)
+
+            return this.locations.includes(cell)
+
         },
         isFired(cell) {
             let turn = null
@@ -137,6 +138,37 @@ new Vue({
                     turn = e.turn
             })
             return this.shipLocations.includes(cell) ? turn : null
+        },
+        allowDrop: function (event) {
+            event.preventDefault();
+        },
+
+        drag: function (event) {
+            event.dataTransfer.setData("text", event.target.id);
+
+        },
+        drop: function (event, row, cell) {
+            event.preventDefault();
+
+            var data = event.dataTransfer.getData("text");
+            event.preventDefault();
+            event.target.appendChild(document.getElementById(data));
+
+            //algo de placement vertical horizontal longueur
+            let originCell = document.getElementById(row + cell)
+            let position = [row + cell, row + (cell + 1), row + (cell + 2)]
+            position.forEach(e => {
+                //document.getElementById(e).innerHTML = "here"
+            })
+            //this.addShip("myboat", position)
+
+            console.log(row + cell)
+        },
+        rotate() {
+
+
+            //document.getElementById('drag1').setAttribute('style', 'transform:rotate(90deg) translateX(-20px)');
+            document.getElementById('drag1').style.webkitTransform = "rotate(90deg) translateY(40px) translateX(40px)";
         }
 
     },

@@ -206,35 +206,12 @@ return map;
         ships.stream().forEach(e -> {
 
             Ship ship = new Ship(e.getType(), e.getLocations());
+            System.out.println(e.getType());
             shipRep.save(ship);
             gamePlayer.addShip(ship);
             gamePlayerRep.save(gamePlayer);
             shipRep.save(ship);
         });
-
-
-/*
-        GamePlayer gamePlayer = gamePlayerRep.findOne(gameplayerId);
-        if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
-        shipRep.save(ships);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-
-
-    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
-    public ResponseEntity<String> addShips( @RequestBody Ship ship, @PathVariable Long gameplayerId){
-
-    GamePlayer gamePlayer = gamePlayerRep.findOne(gameplayerId);
-    if(gamePlayer.getPlayer() != loggedPlayer()) return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
-    shipRep.save(ship);
-  //  ship.setGamePlayer(gamePlayer);
-
-        shipsObj.stream().forEach(e -> { System.out.println(e.toString());
-           Ship ship = new Ship(e.getType, e.getLocations());
-            shipRep.save(ship);
-            gamePlayer.addShip(ship);
-            gamePlayerRep.save(gamePlayer);
-            shipRep.save(ship);
-        } );*/
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
