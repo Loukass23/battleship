@@ -11,8 +11,51 @@ new Vue({
         shipLocations: [],
         salvoesLocations: [],
         opponentSalvoesLocations: [],
+        readytoPlay: false,
+        fleetReady: false,
+        shipFleet: {
+            destroyerS: {
+                type: "Destroyer",
+                set: false,
+                origine: "",
+                locations: "",
+                horizontal: true,
+                size: 2
+            },
+            carrierS: {
+                type: "Carrier",
+                set: false,
+                origine: "",
+                locations: "",
+                horizontal: true,
+                size: 5
+            },
+            submarineS: {
+                type: "Submarine",
+                set: false,
+                origine: "",
+                locations: "",
+                horizontal: true,
+                size: 3
+            },
+            cruiserS: {
+                type: "Cruiser",
+                set: false,
+                origine: "",
+                locations: "",
+                horizontal: true,
+                size: 3
+            },
+            battleshipS: {
+                type: "Battleship",
+                set: false,
+                origine: "",
+                locations: "",
+                horizontal: true,
+                size: 4
+            },
 
-
+        }
     },
     methods: {
         fetchJson(url) {
@@ -20,18 +63,56 @@ new Vue({
                 .get(url)
                 .then(response => {
                     console.log(response.data)
-                    response.data.ships.forEach(e => this.shipLocations = this.shipLocations.concat(e))
+                    response.data.ships.forEach(e => this.shipLocations = this.shipLocations.concat(e.locations))
+                    this.setShips(response.data.ships)
                     response.data.salvoes.forEach(e => this.salvoesLocations = this.salvoesLocations.concat(e))
                     response.data.opponentSalvoes.forEach(e => this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(e))
-                    this.buildGameGrid(this.gameGrid, 'fleet-grid')
-                    this.buildGameGrid(this.gameGrid, 'fired-grid')
+                    //this.buildGameGrid(this.gameGrid, 'fleet-grid')
+                    //this.buildGameGrid(this.gameGrid, 'fired-grid')
                     this.loggedUser = response.data.player
                     this.gamePlayerId = response.data.id
                     console.log(this.shipLocations)
                     console.log(this.salvoesLocations)
+                    //this.showShips()
 
                 })
                 .catch(error => console.log(error))
+        },
+        setShips(ships) {
+            ships.forEach(ship => {
+
+                switch (ship.type) {
+                    case "Destroyer":
+                        this.shipFleet.destroyerS.set = true
+                        this.shipFleet.destroyerS.locations = ship.locations
+                        this.shipFleet.destroyerS.origine = ship.locations[0]
+
+                        break;
+                    case "Submarine":
+                        this.shipFleet.submarineS.set = true
+                        this.shipFleet.submarineS.origine = ship.locations[0]
+                        this.shipFleet.submarineS.locations = ship.locations
+                        break;
+                    case "Carrier":
+                        this.shipFleet.carrierS.set = true
+                        this.shipFleet.carrierS.origine = ship.locations[0]
+                        this.shipFleet.carrierS.locations = ship.locations
+                        break;
+                    case "Battleship":
+                        this.shipFleet.battleshipS.set = true
+                        this.shipFleet.battleshipS.origine = ship.locations[0]
+                        this.shipFleet.battleshipS.locations = ship.locations
+                        break;
+                    case "Cruiser":
+                        this.shipFleet.cruiserS.set = true
+                        this.shipFleet.cruiserS.origine = ship.locations[0]
+                        this.shipFleet.cruiserS.locations = ship.locations
+                        break;
+                }
+
+            })
+            //if (ships.length = 5) this.readytoPlay = true
+
         },
         logout() {
 
@@ -39,28 +120,28 @@ new Vue({
                 .done(() => this.loggedUser = null)
                 .fail();
         },
-        addShip(typ, loc) {
-            //let shipsJson = document.getElementById('ship-form').value;
-            console.log(typ + loc)
+        addShip() {
+            for (let key in this.shipFleet) {
+                $.post({
+                        url: "/api/games/players/" + this.gamePlayerId + "/ships",
+                        data: JSON.stringify(
+                            [{
+                                "type": this.shipFleet[key].type,
+                                "locations": this.shipFleet[key].locations
+                            }]
+                        ),
+                        dataType: "text",
+                        contentType: "application/json"
+                    })
+                    .done(function () {
+                        this.readytoPlay = true
+                        location.reload();
 
-            $.post({
-                    url: "/api/games/players/" + this.gamePlayerId + "/ships",
-                    data: JSON.stringify(
-                        [{
-                            "type": typ,
-                            "locations": loc
-                        }]
-                    ),
-                    dataType: "text",
-                    contentType: "application/json"
-                })
-                .done(function () {
-                    //this.fetchJson(this.url + this.gamePlayerId)
-
-                })
-                .fail(function () {
-                    console.log("fail to add ship")
-                })
+                    })
+                    .fail(function () {
+                        console.log("fail to add ship")
+                    })
+            }
         },
         buildGameGrid(gameGrid, gridType) {
             let fleetGrid = document.getElementById(gridType)
@@ -72,6 +153,7 @@ new Vue({
             keyCell.className = 'col-sm-1 border'
             keyCell.innerHTML = '#'
             headerTop.appendChild(keyCell)
+
 
             gameGrid.horizontal.forEach(element => {
                 let cellTop = document.createElement('div')
@@ -120,7 +202,7 @@ new Vue({
         },
         isShip(cell) {
 
-            return this.locations.includes(cell)
+            return this.shipLocations.includes(cell)
 
         },
         isFired(cell) {
@@ -154,21 +236,114 @@ new Vue({
             event.preventDefault();
             event.target.appendChild(document.getElementById(data));
 
-            //algo de placement vertical horizontal longueur
-            let originCell = document.getElementById(row + cell)
-            let position = [row + cell, row + (cell + 1), row + (cell + 2)]
-            position.forEach(e => {
-                //document.getElementById(e).innerHTML = "here"
-            })
-            //this.addShip("myboat", position)
+            switch (data) {
+                case "Destroyer":
+                    this.shipFleet.destroyerS.locations = this.setLocations(row, cell, this.shipFleet.destroyerS.size, this.shipFleet.destroyerS.horizontal)
+                    this.shipFleet.destroyerS.set = true
+                    break;
+                case "Submarine":
+                    this.shipFleet.submarineS.locations = this.setLocations(row, cell, this.shipFleet.submarineS.size, this.shipFleet.submarineS.horizontal)
+                    this.shipFleet.submarineS.set = true
+                    break;
+                case "Carrier":
+                    this.shipFleet.carrierS.locations = this.setLocations(row, cell, this.shipFleet.carrierS.size, this.shipFleet.carrierS.horizontal)
+                    this.shipFleet.carrierS.set = true
+                    break;
+                case "Battleship":
+                    this.shipFleet.battleshipS.locations = this.setLocations(row, cell, this.shipFleet.battleshipS.size, this.shipFleet.battleshipS.horizontal)
+                    this.shipFleet.battleshipS.set = true
+                    break;
+                case "Cruiser":
+                    this.shipFleet.cruiserS.locations = this.setLocations(row, cell, this.shipFleet.cruiserS.size, this.shipFleet.cruiserS.horizontal)
+                    this.shipFleet.cruiserS.set = true
+                    break;
+            }
+            //this.addShip(data, position)
+            let count = 0;
+            for (let key in this.shipFleet) {
+                if (this.shipFleet[key].set == true) count++
+            }
+            if (count == 5) this.fleetReady = true
 
-            console.log(row + cell)
         },
-        rotate() {
+        setLocations(row, cell, size, horizontal) {
+            let origineIndex
+            let position = []
+            if (horizontal) {
+                origineIndex = this.gameGrid.horizontal.indexOf(cell)
+                for (let i = 0; i < size; i++) {
+                    position.push(row + this.gameGrid.horizontal[origineIndex + i])
+
+                }
 
 
-            //document.getElementById('drag1').setAttribute('style', 'transform:rotate(90deg) translateX(-20px)');
-            document.getElementById('drag1').style.webkitTransform = "rotate(90deg) translateY(40px) translateX(40px)";
+
+            } else {
+                origineIndex = this.gameGrid.vertical.indexOf(row)
+                for (let i = 0; i < size; i++) {
+                    position.push(this.gameGrid.vertical[origineIndex + i] + cell)
+
+                }
+            }
+
+            position.forEach(e => {
+                if (!document.getElementById(e)) alert("Invalid ship position")
+                this.isShip(e) ? document.getElementById(e).style.backgroundColor = "red" :
+                    document.getElementById(e).style.backgroundColor = "blue"
+            })
+            return position
+        },
+        rotateDestroyer() {
+            const des = document.getElementById('Destroyer')
+            if (this.shipFleet.destroyerS.horizontal) {
+                this.shipFleet.destroyerS.horizontal = false
+                des.style.webkitTransform = "rotate(90deg) translateY(20px) translateX(25px)"
+            } else {
+                this.shipFleet.destroyerS.horizontal = true
+                des.style.webkitTransform = "rotate(0deg) translateY(0px) translateX(0px)"
+            }
+        },
+        rotateCarrier() {
+            const des = document.getElementById('Carrier')
+            if (this.shipFleet.carrierS.horizontal) {
+                this.shipFleet.carrierS.horizontal = false
+                des.style.webkitTransform = "rotate(90deg) translateY(75px) translateX(80px)"
+            } else {
+                this.shipFleet.carrierS.horizontal = true
+                des.style.webkitTransform = "rotate(0deg) translateY(0px) translateX(0px)"
+            }
+        },
+        rotateSubmarine() {
+            const des = document.getElementById('Submarine')
+            if (this.shipFleet.submarineS.horizontal) {
+                this.shipFleet.submarineS.horizontal = false
+                des.style.webkitTransform = "rotate(90deg) translateY(30px) translateX(40px)"
+            } else {
+                this.shipFleet.submarineS.horizontal = true
+                des.style.webkitTransform = "rotate(0deg) translateY(0px) translateX(0px)"
+            }
+        },
+        rotateCruiser() {
+            const des = document.getElementById('Cruiser')
+
+            if (this.shipFleet.cruiserS.horizontal) {
+                des.style.webkitTransform = "rotate(90deg) translateY(30px) translateX(40px)"
+                this.shipFleet.cruiserS.horizontal = false
+            } else {
+                this.shipFleet.cruiserS.horizontal = true
+                des.style.webkitTransform = "rotate(0deg) translateY(0px) translateX(0px)"
+            }
+        },
+        rotateBattleship() {
+            const des = document.getElementById('Battleship')
+
+            if (this.shipFleet.battleshipS.horizontal) {
+                des.style.webkitTransform = "rotate(90deg) translateY(60px) translateX(60px)"
+                this.shipFleet.battleshipS.horizontal = false
+            } else {
+                this.shipFleet.battleshipS.horizontal = true
+                des.style.webkitTransform = "rotate(0deg) translateY(0px) translateX(0px)"
+            }
         }
 
     },

@@ -91,7 +91,7 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			shipLocation3.add("F4");
 			Ship s1 = new Ship("Destroyer",shipLocation1);
 			Ship s2 = new Ship("Submarine",shipLocation2);
-			Ship s3 = new Ship("Patrol Boat",shipLocation3);
+			Ship s3 = new Ship("Battleship",shipLocation3);
 			GamePlayer gp1 = new GamePlayer(g1, p1);
 
 			gamePlayerRep.save(gp1);
@@ -103,16 +103,16 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			shipRep.save(s3);
 			gamePlayerRep.save(gp1);
             //Ships Player 2
-			List<String> shipLocation4 = new ArrayList<String>();;
+			List<String> shipLocation4 = new ArrayList<String>();
 			shipLocation4.add("I8");
 			shipLocation4.add("I9");
 			shipLocation4.add("I10");
-			List<String> shipLocation5 = new ArrayList<String>();;
+			List<String> shipLocation5 = new ArrayList<String>();
 			shipLocation5.add("A1");
 			shipLocation5.add("A2");
 			shipLocation5.add("A3");
 			shipLocation5.add("A4");
-			List<String> shipLocation6 = new ArrayList<String>();;
+			List<String> shipLocation6 = new ArrayList<String>();
 			shipLocation6.add("C4");
 			shipLocation6.add("D4");
 			shipLocation6.add("E4");

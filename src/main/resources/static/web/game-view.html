@@ -11,108 +11,131 @@
 </head>
 
 <body>
-    <div id="app">
-        <nav class="navbar">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Battleship</a>
-                </div>
-                <ul class="nav navbar-nav">
-                    <li><a href="home.html">Home</a></li>
-                    <li><a href="games.html">Games</a></li>
-                    <li class="active"><a href="players.html">Players</a></li>
-                    <li><a href="leaderboard.html">Leaderboard</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <div v-if="loggedUser">
-                        <form class="form-inline">
-                            {{loggedUser.username}}
-                        </form>
+    <div class="container-fluid">
+
+        <div id="app">
+            <nav class="navbar">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Battleship</a>
                     </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="home.html">Home</a></li>
+                        <li><a href="games.html">Games</a></li>
+                        <li class="active"><a href="players.html">Players</a></li>
+                        <li><a href="leaderboard.html">Leaderboard</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <div v-if="loggedUser">
+                            <form class="form-inline">
+                                {{loggedUser.username}}
+                            </form>
+                        </div>
+                    </ul>
+                </div>
+                </li>
+
+
+            </nav>
+            <h1>Game View</h1>
+            <h2 id="playerName"></h2>
+
+            <!-- <div class="container" id="fleet-grid">
+                
+
+            </div> -->
+            <div class="container" id="drapShip">
+                <h3>Fleet Grid</h3>
 
             </div>
-            </li>
-            </ul>
 
-        </nav>
-        <h1>Game View</h1>
-        <h2 id="playerName"></h2>
-
-        <div class="container" id="fleet-grid" @drop="drop($event)" @dragover="allowDrop($event)">
-            <h3>Fleet Grid</h3>
-
-        </div>
-        <div id="drapShip">
-
-            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="addShip">Add Ship</button>
-            <div class="form-inline">
-                <input class="form-control mr-sm-2" type="text" id="ship-form">
-                {" type": "destroyer", "locations" : ["H2", "H3", "H4" ] } , { "type" : "test boat" , "locations" :
-                ["H5", "H6" ] }
-
-            </div>
-
-        </div>
-        <div class="container" id="gamegrid">
             <div class="row text-center">
-                <div class="col-xs-1 border">#</div>
-                <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
-                    {{ column }}
+                <div class="col-sm-7">
+                    <div class="container" id="gamegrid">
+                        <div class="row text-center">
+                            <div class="col-xs-1 border">#</div>
+                            <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
+                                {{ column }}
+                            </div>
+                        </div>
+                        <div class="row text-center" v-for="row in gameGrid.vertical" :key="row.id">
+                            <div class="col-xs-1 border"> {{ row }}</div>
+                            <div v-for="cell in gameGrid.horizontal" v-bind:id="row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
+                                <div v-if="isHit( row+cell)" class="col-sm-12 h-100" style="background-color: red">
+
+                                </div>
+                                <div v-else-if="isShip( row+cell)" class="col-sm-12 h-100" style="background-color: blue">
+                                </div>
+                                <div v-else class="col-sm-12 h-100  px-0 py-0 mx-0 my-0" @drop="drop($event,row,cell )"
+                                    @dragover=" allowDrop($event,row,cell)"></div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="!readytoPlay" class="col-sm-3">
+                    <div class="container">
+                        <div v-if="!shipFleet.destroyerS.set">Destroyer
+                            <img id="Destroyer" height="25px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
+                                draggable="true" @dragstart="drag($event)">
+                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotateDestroyer">Rotate</button>
+                        </div>
+                        <div v-if="!shipFleet.cruiserS.set">Cruiser
+                            <img id="Cruiser" height="40px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060044/cruiser.png"
+                                draggable="true" @dragstart="drag($event)">
+                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotateCruiser">Rotate</button>
+                        </div>
+                        <div v-if="!shipFleet.carrierS.set">Carrier
+                            <img id="Carrier" height="40px" width="200px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
+                                draggable="true" @dragstart="drag($event)">
+                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotateCarrier">Rotate</button>
+                        </div>
+                        <div v-if="!shipFleet.submarineS.set">Submarine
+                            <img id="Submarine" height="40px" width="110px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060557/kisspng-kilo-class-submarine-typhoon-class-submarine-akula-class-room-5acd73cbaea0a1.8466053715234139637153.png"
+                                draggable="true" @dragstart="drag($event)">
+                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotateSubmarine">Rotate</button>
+                        </div>
+                        <div v-if="!shipFleet.battleshipS.set">Battleship
+                            <img id="Battleship" height="40px" width="160px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060383/battleship.png"
+                                draggable="true" @dragstart="drag($event)">
+                            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotateBattleship">Rotate</button>
+                        </div>
+                        <button v-if="fleetReady" class="btn btn-outline-success my-2 my-sm-0" v-on:click="addShip">Add
+                            Ships</button>
+                    </div>
                 </div>
             </div>
-            <div class="row text-center" v-for="row in gameGrid.vertical" :key="row.id">
-                <div class="col-xs-1 border"> {{ row }}</div>
-                <div @drop="drop($event,row,cell )" @dragover="allowDrop($event,row,cell)" class="col-xs-1 border px-0 py-0 mx-0 my-0"
-                    v-for="cell in gameGrid.horizontal" v-bind:id="row + cell" :key="cell.id">
-                    <!-- <div class="bg-danger" v-if="isHit(row + cell)">X</div> 
-                    <div v-if="isShip2( row+cell)" class="col-sm-1 border px-0 py-0 mx-0 my-0 bg-primary">
+        </div>
+        <!-- <div class="container" id="fired-grid">
+            <div class="row text-center">
+                <div class="col-sm-12">
 
-                    </div>-->
-
-
+                    <h3>Shots Fired</h3>
                 </div>
 
 
+                <table class="table table-bordered">
+                    <thead id="game-table-header">
+
+                    </thead>
+                    <tbody id="game-table">
+
+                    </tbody>
+                </table>
+                <table class="table table-bordered">
+                    <thead id="game-table-header-fired">
+
+                    </thead>
+                    <tbody id="game-table-fired">
+
+                    </tbody>
+                </table>
             </div>
-        </div>
-        <div class="row text-center">
-            <div id="destroyer" class="col-sm-3  bg-primary" draggable="true" @dragstart="drag($event)">Destroyer</div>
-        </div>
-        <div class="row text-center">
-            <div id="destroyer" class="col-sm-2  bg-primary" draggable="true" @dragstart="drag($event)">Submarine</div>
-        </div>
-        <div>Destroyer
-            <img id="drag1" height="40px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
-                draggable="true" @dragstart="drag($event)">
-            <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotate">Rotate</button>
-        </div>
-
+        </div> -->
     </div>
-    <hr>
-    <div class="container" id="fired-grid">
-        <h3>Shots Fired</h3>
-    </div>
-    <div class="container">
 
-        <table class="table table-bordered">
-            <thead id="game-table-header">
-
-            </thead>
-            <tbody id="game-table">
-
-            </tbody>
-        </table>
-        <table class="table table-bordered">
-            <thead id="game-table-header-fired">
-
-            </thead>
-            <tbody id="game-table-fired">
-
-            </tbody>
-        </table>
-    </div>
-    </div>
-    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
