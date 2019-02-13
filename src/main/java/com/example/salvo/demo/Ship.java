@@ -14,6 +14,7 @@ public class Ship {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private String type ;
+    private boolean horizontal ;
 
 
     @ElementCollection
@@ -31,9 +32,10 @@ public class Ship {
     public Ship(String type) {
         this.type = type;
     }
-    public Ship(String type, List<String> location) {
+    public Ship(String type, List<String> location, boolean horizontal) {
         this.type = type;
         this.locations = location;
+        this.horizontal = horizontal;
     }
     public void setGamePlayer(GamePlayer gamePlayer){
         this.gamePlayer = gamePlayer;
@@ -45,6 +47,14 @@ public class Ship {
 
     public void setLocations(List<String> locations) {
         this.locations = locations;
+    }
+
+    public void setHorizontal(boolean horizontal) {
+        this.horizontal = horizontal;
+    }
+
+    public boolean isHorizontal() {
+        return horizontal;
     }
 
     public long getId(){

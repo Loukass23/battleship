@@ -26,6 +26,8 @@ public class SalvoController {
     private PlayerRepository playerRep;
     @Autowired
     private ShipRepository shipRep;
+    @Autowired
+    private SalvoRepository salvoRep;
 
 
     @RequestMapping("/login")
@@ -205,12 +207,29 @@ return map;
 
         ships.stream().forEach(e -> {
 
-            Ship ship = new Ship(e.getType(), e.getLocations());
-            System.out.println(e.getType());
+            Ship ship = new Ship(e.getType(), e.getLocations(), e.isHorizontal());
             shipRep.save(ship);
             gamePlayer.addShip(ship);
             gamePlayerRep.save(gamePlayer);
             shipRep.save(ship);
+        });
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
+    }
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvoes", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> addSalvoes(@PathVariable Long gamePlayerId,  @RequestBody List<Salvo> salvoes) {
+        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        if (gamePlayer.getPlayer() != loggedPlayer())
+            return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
+
+        salvoes.stream().forEach(e -> {
+
+            Salvo salvo = new Salvo(e.getTurn(), e.getSalvoesLocations());
+            salvoRep.save(salvo);
+            gamePlayer.addSalvo(salvo);
+            gamePlayerRep.save(gamePlayer);
+            salvoRep.save(salvo);
         });
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

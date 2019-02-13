@@ -13,6 +13,7 @@ new Vue({
         opponentSalvoesLocations: [],
         readytoPlay: false,
         fleetReady: false,
+        currentSalvo: [],
         shipFleet: {
             destroyerS: {
                 type: "Destroyer",
@@ -20,7 +21,8 @@ new Vue({
                 origine: "",
                 locations: "",
                 horizontal: true,
-                size: 2
+                size: 2,
+                img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
             },
             carrierS: {
                 type: "Carrier",
@@ -28,7 +30,8 @@ new Vue({
                 origine: "",
                 locations: "",
                 horizontal: true,
-                size: 5
+                size: 5,
+                img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
             },
             submarineS: {
                 type: "Submarine",
@@ -36,7 +39,8 @@ new Vue({
                 origine: "",
                 locations: "",
                 horizontal: true,
-                size: 3
+                size: 3,
+                img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060557/kisspng-kilo-class-submarine-typhoon-class-submarine-akula-class-room-5acd73cbaea0a1.8466053715234139637153.png"
             },
             cruiserS: {
                 type: "Cruiser",
@@ -44,7 +48,8 @@ new Vue({
                 origine: "",
                 locations: "",
                 horizontal: true,
-                size: 3
+                size: 3,
+                img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060044/cruiser.png"
             },
             battleshipS: {
                 type: "Battleship",
@@ -52,7 +57,8 @@ new Vue({
                 origine: "",
                 locations: "",
                 horizontal: true,
-                size: 4
+                size: 4,
+                img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060383/battleship.png"
             },
 
         }
@@ -71,10 +77,6 @@ new Vue({
                     //this.buildGameGrid(this.gameGrid, 'fired-grid')
                     this.loggedUser = response.data.player
                     this.gamePlayerId = response.data.id
-                    console.log(this.shipLocations)
-                    console.log(this.salvoesLocations)
-                    //this.showShips()
-
                 })
                 .catch(error => console.log(error))
         },
@@ -86,27 +88,32 @@ new Vue({
                         this.shipFleet.destroyerS.set = true
                         this.shipFleet.destroyerS.locations = ship.locations
                         this.shipFleet.destroyerS.origine = ship.locations[0]
+                        this.shipFleet.destroyerS.horizontal = ship.horizontal
 
                         break;
                     case "Submarine":
                         this.shipFleet.submarineS.set = true
                         this.shipFleet.submarineS.origine = ship.locations[0]
                         this.shipFleet.submarineS.locations = ship.locations
+                        this.shipFleet.submarineS.horizontal = ship.horizontal
                         break;
                     case "Carrier":
                         this.shipFleet.carrierS.set = true
                         this.shipFleet.carrierS.origine = ship.locations[0]
                         this.shipFleet.carrierS.locations = ship.locations
+                        this.shipFleet.carrierS.horizontal = ship.horizontal
                         break;
                     case "Battleship":
                         this.shipFleet.battleshipS.set = true
                         this.shipFleet.battleshipS.origine = ship.locations[0]
                         this.shipFleet.battleshipS.locations = ship.locations
+                        this.shipFleet.battleshipS.horizontal = ship.horizontal
                         break;
                     case "Cruiser":
                         this.shipFleet.cruiserS.set = true
                         this.shipFleet.cruiserS.origine = ship.locations[0]
                         this.shipFleet.cruiserS.locations = ship.locations
+                        this.shipFleet.cruiserS.horizontal = ship.horizontal
                         break;
                 }
 
@@ -146,6 +153,29 @@ new Vue({
                         console.log("fail to add ship")
                     })
             }
+        },
+        addSalvo() {
+            //for (let key in this.shipFleet) {
+            $.post({
+                    url: "/api/games/players/" + this.gamePlayerId + "/salvoes",
+                    data: JSON.stringify(
+                        [{
+                            "turn": 7,
+                            "salvoesLocations": ["H1", "H5"]
+                        }]
+                    ),
+                    dataType: "text",
+                    contentType: "application/json"
+                })
+                .done(function () {
+                    console.log("added salvo")
+                    location.reload();
+
+                })
+                .fail(function () {
+                    console.log("fail to salvo")
+                })
+
         },
         buildGameGrid(gameGrid, gridType) {
             let fleetGrid = document.getElementById(gridType)
@@ -225,18 +255,46 @@ new Vue({
             })
             return this.shipLocations.includes(cell) ? turn : null
         },
-        allowDrop: function (event) {
+        mouseonSalvoes: function (event, row, cell) {
             event.preventDefault();
+            if (!this.currentSalvo[1])
+                document.getElementById("_" + row + cell).style.backgroundColor = "blue"
+        },
+        mouseoutSalvoes: function (event, row, cell) {
+            event.preventDefault();
+
+            document.getElementById("_" + row + cell).style.backgroundColor = ""
+        },
+        salvoSelect(row, cell) {
+            if (this.isFired(row + cell)) {
+                alert("You already fired at this position")
+            } else {
+                this.currentSalvo.length < 2 ? this.currentSalvo.push(row + cell) : alert('2 salvo allowed')
+
+            }
         },
 
+        allowDrop: function (event, row, cell) {
+            const data = event.dataTransfer.getData("text");
+
+            document.getElementById(row + cell).style.backgroundColor = "blue"
+            event.preventDefault();
+        },
+        dragLeave: function (event, row, cell) {
+            const data = event.dataTransfer.getData("text");
+
+            document.getElementById(row + cell).style.backgroundColor = ""
+            event.preventDefault();
+        },
         drag: function (event) {
+
             event.dataTransfer.setData("text", event.target.id);
 
         },
         drop: function (event, row, cell) {
             event.preventDefault();
-
-            var data = event.dataTransfer.getData("text");
+            document.getElementById(row + cell).style.backgroundColor = ""
+            const data = event.dataTransfer.getData("text");
             event.preventDefault();
             event.target.appendChild(document.getElementById(data));
 
@@ -295,8 +353,8 @@ new Vue({
 
             position.forEach(e => {
                 if (!document.getElementById(e)) alert("Invalid ship position")
-                this.isShip(e) ? document.getElementById(e).style.backgroundColor = "red" :
-                    document.getElementById(e).style.backgroundColor = "blue"
+                if (this.isShip(e)) alert("Ship in collision with another ship")
+                //     document.getElementById(e).style.backgroundColor = "blue"
             })
             return position
         },
