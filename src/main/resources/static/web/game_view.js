@@ -111,7 +111,11 @@ new Vue({
                 }
 
             })
-            //if (ships.length = 5) this.readytoPlay = true
+            let count = 0;
+            for (let key in this.shipFleet) {
+                if (this.shipFleet[key].set == true) count++
+            }
+            if (count == 5) this.readytoPlay = true
 
         },
         logout() {
@@ -258,13 +262,16 @@ new Vue({
                     this.shipFleet.cruiserS.set = true
                     break;
             }
-            //this.addShip(data, position)
+            this.isFleetReady();
+
+
+        },
+        isFleetReady() {
             let count = 0;
             for (let key in this.shipFleet) {
                 if (this.shipFleet[key].set == true) count++
             }
             if (count == 5) this.fleetReady = true
-
         },
         setLocations(row, cell, size, horizontal) {
             let origineIndex

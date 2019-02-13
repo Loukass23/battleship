@@ -75,8 +75,10 @@
                     </div>
                 </div>
 
-                <div v-if="!readytoPlay" class="col-sm-3">
-                    <div class="container">
+                <div class="col-sm-3">
+                    <div v-if="!readytoPlay" class="container">
+                        <button v-if="fleetReady" class="btn btn-outline-success my-2 my-sm-0" v-on:click="addShip">Add
+                            Ships</button>
                         <div v-if="!shipFleet.destroyerS.set">Destroyer
                             <img id="Destroyer" height="25px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
                                 draggable="true" @dragstart="drag($event)">
@@ -102,8 +104,7 @@
                                 draggable="true" @dragstart="drag($event)">
                             <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="rotateBattleship">Rotate</button>
                         </div>
-                        <button v-if="fleetReady" class="btn btn-outline-success my-2 my-sm-0" v-on:click="addShip">Add
-                            Ships</button>
+
                     </div>
                 </div>
             </div>
