@@ -37,15 +37,9 @@
 
         </nav>
 
-        <div class="container-fluid text-center center-block">
+        <div class="container-fluid text-center center-block" my-0>
             <h1>Game View</h1>
-            <h2 id="playerName"></h2>
-
-            <div class="container " id="drapShip">
-
-
-            </div>
-
+            <h3> turn: {{currentTurn+1}}</h3>
             <div class="row text-center">
                 <div class="col-lg-6 mr-0">
                     <h3>Fleet Grid</h3>
@@ -59,18 +53,26 @@
                         <div class="row text-center" v-for="row in gameGrid.vertical" :key="row.id">
                             <div class="col-xs-1 border"> {{ row }}</div>
                             <div v-for="cell in gameGrid.horizontal" v-bind:id="row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
-                                <div v-if="isHit( row+cell)" class="col-sm-12 h-100" style="background-color: red">
+                                <img v-for="ship in shipFleet" v-if="ship.origine == row+cell" :key="ship.id" height="40px"
+                                    :width="ship.width" :src="ship.img" :style="shipDirection(ship.type)" :id="ship.type">
 
+                                <div class="puffIn" id="puffIn" v-if="isHit( row+cell)" class="col-sm-12 h-100" style="background-color: firebrick">
+                                    {{isHit( row+cell)}}
                                 </div>
-                                <div v-else-if="isShip( row+cell)" class="col-sm-12 h-100" style="background-color: blue">
-                                </div>
+
+                                <!-- <div v-else-if="isShip_old( row+cell)" class="col-sm-12 h-100" style="background-color: blue">
+                                </div> -->
+
                                 <div v-else class="col-sm-12 h-100  px-0 py-0 mx-0 my-0" @drop="drop($event,row,cell)"
                                     @dragover="allowDrop($event,row,cell)" @dragleave="dragLeave($event,row,cell)"></div>
 
                             </div>
 
                         </div>
+
                     </div>
+                    <button v-show="invalidPos" class="btn btn-outline-danger my-2 my-sm-0">Invalid Position</button>
+
                 </div>
 
                 <div class="col-lg-6">
@@ -80,50 +82,51 @@
                         <button v-if="fleetReady" class="btn btn-outline-dark my-2 my-sm-0" v-on:click="addShip">Add
                             Ships</button>
                         <div class="row" style="display: flex">
-                            <div style="display: flex" v-if="!shipFleet.destroyerS.set">
+                            <div style="display: flex" v-if="!shipFleet.destroyer.set">
                                 <h5>Destroyer</h5>
 
                                 <button v-on:click="rotateDestroyer" class="btn"><i class="fas fa-sync-alt"></i><img id="Destroyer"
-                                        height="25px" :src="shipFleet.destroyerS.img" draggable="true" @dragstart="drag($event)"></button>
+                                        :width="shipFleet.destroyer.width" height="40px" :src="shipFleet.destroyer.img"
+                                        draggable="true" @dragstart="drag($event)"></button>
 
                             </div>
                         </div>
                         <div class="row " style="height: 50px;">
-                            <div style="display: flex" v-if=" !shipFleet.cruiserS.set">
+                            <div style="display: flex" v-if=" !shipFleet.cruiser.set">
                                 <h5>Cruiser</h5>
 
                                 <button v-on:click="rotateCruiser" class="btn"><i class="fas fa-sync-alt"></i><img id="Cruiser"
-                                        height="40px" :src="shipFleet.cruiserS.img" draggable="true" @dragstart="drag($event)"></button>
+                                        height="40px" :src="shipFleet.cruiser.img" draggable="true" @dragstart="drag($event)"></button>
                             </div>
                         </div>
                         <div class="row" style="height: 50px">
-                            <div style="display: flex" v-if="!shipFleet.carrierS.set">
+                            <div style="display: flex" v-if="!shipFleet.carrier.set">
                                 <h5>Carrier</h5>
 
                                 <button v-on:click="rotateCarrier" class="btn"><i class="fas fa-sync-alt"></i><img id="Carrier"
-                                        height="40px" width="200px" :src="shipFleet.carrierS.img" draggable="true"
-                                        @dragstart="drag($event)"></button>
+                                        height="40px" :width="shipFleet.carrier.width" :src="shipFleet.carrier.img"
+                                        draggable="true" @dragstart="drag($event)"></button>
 
                             </div>
                         </div>
                         <div class="row" style="display: flex">
-                            <div style="display: flex" v-if="!shipFleet.submarineS.set">
+                            <div style="display: flex" v-if="!shipFleet.submarine.set">
                                 <h5>Submarine</h5>
 
                                 <button id="sub" v-on:click="rotateSubmarine" class="btn"><i class="fas fa-sync-alt"></i>
-                                    <img id="Submarine" height="40px" width="110px" :src="shipFleet.submarineS.img"
+                                    <img id="Submarine" height="40px" :width="shipFleet.submarine.width" :src="shipFleet.submarine.img"
                                         draggable="true" @dragstart="drag($event)"></button>
 
                             </div>
                         </div>
                         <div class="row text-center">
 
-                            <div style="display: flex" v-if="!shipFleet.battleshipS.set">
+                            <div style="display: flex" v-if="!shipFleet.battleship.set">
 
                                 <h5>Battleship</h5>
 
                                 <button v-on:click="rotateBattleship" class="btn"><i class="fas fa-sync-alt"></i> <img
-                                        id="Battleship" height="40px" width="160px" :src="shipFleet.battleshipS.img"
+                                        id="Battleship" height="40px" :width="shipFleet.battleship.width" :src="shipFleet.battleship.img"
                                         draggable="true" @dragstart="drag($event)"></button>
 
                             </div>
@@ -134,6 +137,7 @@
                     <div v-else class="container">
                         <h3>Salvoes Grid</h3>
                         <div class="container" id="gamegrid">
+
                             <div class="row text-center">
                                 <div class="col-xs-1 border">#</div>
                                 <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
