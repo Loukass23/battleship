@@ -39,7 +39,7 @@
 
         <div class="container-fluid text-center center-block" my-0>
             <h1>Game View</h1>
-            <h3> turn: {{currentTurn+1}}</h3>
+            <h3>Game: {{gameId}} turn: {{currentTurn+1}}</h3>
             <div class="row text-center">
                 <div class="col-lg-6 mr-0">
                     <h3>Fleet Grid</h3>
@@ -56,9 +56,12 @@
                                 <img v-for="ship in shipFleet" v-if="ship.origine == row+cell" :key="ship.id" height="40px"
                                     :width="ship.width" :src="ship.img" :style="shipDirection(ship.type)" :id="ship.type">
 
-                                <div class="puffIn" id="puffIn" v-if="isHit( row+cell)" class="col-sm-12 h-100" style="background-color: firebrick">
-                                    {{isHit( row+cell)}}
+                                <div class="puffIn infotooltip" id="puffIn" v-if="isHit( row+cell)" class="col-sm-12 h-100">
+                                    <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550149790/explode.png">
+
+                                    <span class="tooltiptext">Turn {{isHit( row+cell)}}</span>
                                 </div>
+
 
                                 <!-- <div v-else-if="isShip_old( row+cell)" class="col-sm-12 h-100" style="background-color: blue">
                                 </div> -->
@@ -156,9 +159,10 @@
                             </div>
                             <div class="row text-center" style="display: flex">
                                 <h5>Ready to fire at positions {{currentSalvo[0]}} {{currentSalvo[1]}} </h5>
-                                <button v-if="currentSalvo[1]" class="btn btn-danger my-2 my-sm-0" v-on:click="addSalvo">Fire
-                                </button>
-
+                                <div v-if="currentSalvo[1]">
+                                    <button class="btn btn-danger my-2 my-sm-0" v-on:click="addSalvo">Fire</button>
+                                    <button class="btn btn-info my-2 my-sm-0" v-on:click="currentSalvo = []">Cancel</button>
+                                </div>
                             </div>
                         </div>
                     </div>

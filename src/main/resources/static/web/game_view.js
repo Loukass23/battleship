@@ -4,6 +4,7 @@ new Vue({
         url: '/api/game_view/',
         loggedUser: null,
         gamePlayerId: null,
+        gameId: null,
         gameGrid: {
             horizontal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             vertical: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
@@ -83,13 +84,13 @@ new Vue({
                 .get(url)
                 .then(response => {
                     console.log(response.data)
+                    this.gameId = response.data.game.id
+                    this.loggedUser = response.data.player
+                    this.gamePlayerId = response.data.id
 
                     this.setShips(response.data.ships)
                     this.setSalvoes(response.data.salvoes)
                     response.data.opponentSalvoes.forEach(e => this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(e))
-
-                    this.loggedUser = response.data.player
-                    this.gamePlayerId = response.data.id
                 })
                 .catch(error => console.log(error))
         },
@@ -193,14 +194,24 @@ new Vue({
         },
         mouseonSalvoes: function (event, row, cell) {
             event.preventDefault();
-            if (!this.currentSalvo[1])
-                document.getElementById("_" + row + cell).style.backgroundColor = "coral"
+            if (!this.currentSalvo[1]) {
+                //document.getElementById("_" + row + cell).style.backgroundColor = "coral"
+                let div = document.getElementById("_" + row + cell)
+                // img = document.createElement('img')
+                // img.id = 'target'
+                // img.src = "https://res.cloudinary.com/ds3w3iwbk/image/upload/c_scale,w_30/v1550137162/target_PNG38.png"
+
+                // div.appendChild(img)
+                div.style.backgroundImage = "url('https://res.cloudinary.com/ds3w3iwbk/image/upload/c_scale,w_30/v1550137162/target_PNG38.png')"
+                div.style.backgroundRepeat = "no-repeat"
+                div.style.backgroundOrigin = "border-box"
+            }
 
         },
         mouseoutSalvoes: function (event, row, cell) {
             event.preventDefault();
-
-            document.getElementById("_" + row + cell).style.backgroundColor = ""
+            //document.getElementById("target").remove()
+            document.getElementById("_" + row + cell).style.backgroundImage = ""
         },
         salvoSelect(row, cell) {
             if (this.isFired(row + cell)) {
@@ -247,7 +258,6 @@ new Vue({
             let key = data.toLowerCase()
             this.shipFleet[key].locations = this.setLocations(row, cell, this.shipFleet[key].size, this.shipFleet[key].horizontal)
             this.shipFleet[key].set = true
-            console.log(this.shipFleet[key].locations)
             this.isFleetReady();
         },
         isFleetReady() {
@@ -255,7 +265,6 @@ new Vue({
             for (let key in this.shipFleet) {
                 if (this.shipFleet[key].set == true) count++
             }
-            console.log(count)
             if (count == 5) this.fleetReady = true
         },
         setLocations(row, cell, size, horizontal) {
@@ -331,7 +340,6 @@ new Vue({
         },
         shipDirection(ship) {
             const key = ship.toLowerCase()
-            console.log(this.shipFleet[key].horizontal)
             if (!this.shipFleet[key].horizontal) {
                 return "-webkit-transform: rotate(90deg) translateY(" + this.shipFleet[key].transform[0] + "px)  translateX(" + this.shipFleet[key].transform[1] + "px)"
             }
