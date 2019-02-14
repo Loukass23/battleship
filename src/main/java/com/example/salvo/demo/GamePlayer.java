@@ -102,9 +102,7 @@ public class GamePlayer {
        GamePlayer opponant = this.getOpponent();
         List<Object> shipsHit = new ArrayList<>();
        opponant.getShips().stream().forEach(ship -> {
-           if(ship.isHit(this.getSalvoes())!= null) {
                shipsHit.add(ship.isHit(this.getSalvoes()));
-           }
        });
 return  shipsHit;
     }

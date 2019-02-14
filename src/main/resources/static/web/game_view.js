@@ -214,7 +214,8 @@ new Vue({
             document.getElementById("_" + row + cell).style.backgroundImage = ""
         },
         salvoSelect(row, cell) {
-            if (this.isFired(row + cell)) {
+            if (this.currentSalvo[0] == (row + cell)) alert("You are firing at this position already")
+            else if (this.isFired(row + cell)) {
                 alert("You already fired at this position")
             } else {
                 this.currentSalvo.length < 2 ? this.currentSalvo.push(row + cell) : alert('2 salvo allowed')

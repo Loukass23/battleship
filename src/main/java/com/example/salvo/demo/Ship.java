@@ -73,6 +73,9 @@ public class Ship {
                    hit.put("turn", sal.getTurn());
                    hit.put("hit", loc);
                    this.hits ++;
+                   if (this.hits == this.size){
+                       hit.put("sunk", this.type);
+                   }
                    hitsObj.add(hit);
             }});
         });
