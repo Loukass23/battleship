@@ -3,9 +3,7 @@ package com.example.salvo.demo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class GamePlayer {
@@ -85,7 +83,7 @@ public class GamePlayer {
         return salvoes;
     }
 
-    public Set<Salvo> getOpponentSalvoes(){
+    private GamePlayer getOpponent(){
         Set<GamePlayer> gamePlayers = this.getGame().getGamePlayers();
         final GamePlayer[] opponent = new GamePlayer[1];
         gamePlayers.forEach(e -> {
@@ -93,7 +91,22 @@ public class GamePlayer {
                 opponent[0] = e;
             }
         });
-       return  opponent[0].getSalvoes();
+        return  opponent[0];
+    }
+
+    public Set<Salvo> getOpponentSalvoes(){
+        GamePlayer opponant = this.getOpponent();
+       return  opponant.getSalvoes();
+    }
+    public List<Object> getHits(){
+       GamePlayer opponant = this.getOpponent();
+        List<Object> shipsHit = new ArrayList<>();
+       opponant.getShips().stream().forEach(ship -> {
+           if(ship.isHit(this.getSalvoes())!= null) {
+               shipsHit.add(ship.isHit(this.getSalvoes()));
+           }
+       });
+return  shipsHit;
     }
     @JsonIgnore
     public Score getScores(){

@@ -207,7 +207,7 @@ return map;
 
         ships.stream().forEach(e -> {
 
-            Ship ship = new Ship(e.getType(), e.getLocations(), e.isHorizontal());
+            Ship ship = new Ship(e.getType(), e.getLocations(), e.isHorizontal(), e.getSize());
             shipRep.save(ship);
             gamePlayer.addShip(ship);
             gamePlayerRep.save(gamePlayer);

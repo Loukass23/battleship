@@ -8,6 +8,12 @@
 
 }
 
+.shipimg {
+  z-index: 1;
+  position: absolute;
+  transform: translateX(-20px);
+
+}
 
 
 #div1 {
@@ -22,8 +28,9 @@
   animation-name: puffIn;
   animation-duration: .5s;
   border-radius: 100px;
-  margin-top: 5px;
-  position: relative;
+
+  position: absolute;
+
   z-index: 999999;
   background-image: url("https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550149790/explode.png")
 }

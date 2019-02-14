@@ -28,7 +28,7 @@ new Vue({
                 horizontal: true,
                 size: 2,
                 width: "80px",
-                transform: [20, 25],
+                transform: [30, 25],
                 img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
             },
             carrier: {
@@ -39,7 +39,7 @@ new Vue({
                 horizontal: true,
                 size: 5,
                 width: "200px",
-                transform: [75, 80],
+                transform: [90, 80],
                 img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1549969552/destroyer.png"
             },
             submarine: {
@@ -50,7 +50,7 @@ new Vue({
                 horizontal: true,
                 size: 3,
                 width: "110px",
-                transform: [30, 40],
+                transform: [45, 40],
                 img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060557/kisspng-kilo-class-submarine-typhoon-class-submarine-akula-class-room-5acd73cbaea0a1.8466053715234139637153.png"
             },
             cruiser: {
@@ -61,7 +61,7 @@ new Vue({
                 horizontal: true,
                 size: 3,
                 width: "",
-                transform: [30, 40],
+                transform: [40, 40],
                 img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060044/cruiser.png"
             },
             battleship: {
@@ -72,7 +72,7 @@ new Vue({
                 horizontal: true,
                 size: 4,
                 width: "160px",
-                transform: [60, 60],
+                transform: [70, 60],
                 img: "https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550060383/battleship.png"
             },
 
@@ -101,7 +101,6 @@ new Vue({
                 if (salvo.turn > turn) turn = salvo.turn
             })
             this.currentTurn = turn
-            console.log(this.salvoesLocations)
         },
         setShips(ships) {
             let count = 0;
@@ -127,7 +126,8 @@ new Vue({
                             [{
                                 "type": this.shipFleet[key].type,
                                 "locations": this.shipFleet[key].locations,
-                                "horizontal": this.shipFleet[key].horizontal
+                                "horizontal": this.shipFleet[key].horizontal,
+                                "size": this.shipFleet[key].size
                             }]
                         ),
                         dataType: "text",

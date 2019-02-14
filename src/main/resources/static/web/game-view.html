@@ -50,11 +50,12 @@
                                 {{ column }}
                             </div>
                         </div>
-                        <div class="row text-center" v-for="row in gameGrid.vertical" :key="row.id">
+                        <div class="row text-center" style=" max-height: 40px" v-for="row in gameGrid.vertical" :key="row.id">
                             <div class="col-xs-1 border"> {{ row }}</div>
                             <div v-for="cell in gameGrid.horizontal" v-bind:id="row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
-                                <img v-for="ship in shipFleet" v-if="ship.origine == row+cell" :key="ship.id" height="40px"
-                                    :width="ship.width" :src="ship.img" :style="shipDirection(ship.type)" :id="ship.type">
+                                <img class="shipimg" v-for="ship in shipFleet" v-if="ship.origine == row+cell" :key="ship.id"
+                                    height="40px" :width="ship.width" :src="ship.img" :style="shipDirection(ship.type)"
+                                    :id="ship.type">
 
                                 <div class="puffIn infotooltip" id="puffIn" v-if="isHit( row+cell)" class="col-sm-12 h-100">
                                     <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550149790/explode.png">
@@ -63,7 +64,8 @@
                                 </div>
 
 
-                                <!-- <div v-else-if="isShip_old( row+cell)" class="col-sm-12 h-100" style="background-color: blue">
+                                <!-- <div v-if="isHit( row+cell)" class="col-sm-12 h-100" style="background-color: red">
+                                    {{isHit( row+cell)}}
                                 </div> -->
 
                                 <div v-else class="col-sm-12 h-100  px-0 py-0 mx-0 my-0" @drop="drop($event,row,cell)"

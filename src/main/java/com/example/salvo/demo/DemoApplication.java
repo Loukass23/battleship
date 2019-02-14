@@ -89,9 +89,9 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			shipLocation3.add("D4");
 			shipLocation3.add("E4");
 			shipLocation3.add("F4");
-			Ship s1 = new Ship("Destroyer",shipLocation1,true);
-			Ship s2 = new Ship("Submarine",shipLocation2,true);
-			Ship s3 = new Ship("Battleship",shipLocation3,false);
+			Ship s1 = new Ship("Destroyer",shipLocation1,true, 2);
+			Ship s2 = new Ship("Submarine",shipLocation2,true, 3);
+			Ship s3 = new Ship("Battleship",shipLocation3,false,4);
 			GamePlayer gp1 = new GamePlayer(g1, p1);
 
 			gamePlayerRep.save(gp1);
@@ -117,9 +117,9 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			shipLocation6.add("D4");
 			shipLocation6.add("E4");
 			shipLocation6.add("F4");
-            Ship s4 = new Ship("Destroyer",shipLocation4, true);
-            Ship s5 = new Ship("Submarine",shipLocation5,true);
-            Ship s6 = new Ship("Patrol Boat",shipLocation6,false);
+            Ship s4 = new Ship("Destroyer",shipLocation4, true,2);
+            Ship s5 = new Ship("Submarine",shipLocation5,true,3);
+            Ship s6 = new Ship("Carrier",shipLocation6,false,5);
 			GamePlayer gp2 = new GamePlayer(g1, p2);
 
 
