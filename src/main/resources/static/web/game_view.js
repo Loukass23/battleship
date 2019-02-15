@@ -2,6 +2,8 @@ new Vue({
     el: '#app',
     data: {
         url: '/api/game_view/',
+        gpId: new URLSearchParams(window.location.search).get("gp"),
+        refresh: null,
         loggedUser: null,
         gamePlayerId: null,
         gameId: null,
@@ -12,6 +14,8 @@ new Vue({
         shipLocations: [],
         salvoesLocations: [],
         opponentSalvoesLocations: [],
+        hits: [],
+        sunk: [],
         readytoPlay: false,
         fleetReady: false,
         currentSalvo: [],
@@ -19,6 +23,7 @@ new Vue({
         invalidPos: false,
         shadow: [],
         currentTurn: null,
+        opponentTurn: null,
         shipFleet: {
             destroyer: {
                 type: "Destroyer",
@@ -79,6 +84,11 @@ new Vue({
         }
     },
     methods: {
+        refreshData() {
+            this.refresh = setInterval(() => {
+                this.fetchJson(this.url + this.gpId)
+            }, 3000)
+        },
         fetchJson(url) {
             axios
                 .get(url)
@@ -90,9 +100,27 @@ new Vue({
 
                     this.setShips(response.data.ships)
                     this.setSalvoes(response.data.salvoes)
+                    this.setOpponentSalvoes(response.data.opponentSalvoes)
+                    this.setHits(response.data.hits)
                     response.data.opponentSalvoes.forEach(e => this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(e))
                 })
                 .catch(error => console.log(error))
+        },
+        setHits(hits) {
+
+            hits.forEach(hit => {
+                this.hits = this.hits.concat(hit)
+                console.log(this.hits)
+            })
+
+        },
+        setOpponentSalvoes(salvoes) {
+            let turn = 0
+            salvoes.forEach(salvo => {
+                this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(salvo)
+                if (salvo.turn > turn) turn = salvo.turn
+            })
+            this.opponentTurn = turn
         },
         setSalvoes(salvoes) {
             let turn = 0
@@ -192,16 +220,20 @@ new Vue({
             })
             return this.shipLocations.includes(cell) ? turn : null
         },
+        hasHit(cell) {
+            let turn = null
+            this.hits.forEach(e => {
+                if (e.hit.includes(cell))
+                    turn = e.turn
+                if (e.sunk && !this.sunk.includes(e.sunk)) this.sunk.push(e.sunk)
+            })
+
+            return turn
+        },
         mouseonSalvoes: function (event, row, cell) {
             event.preventDefault();
             if (!this.currentSalvo[1]) {
-                //document.getElementById("_" + row + cell).style.backgroundColor = "coral"
                 let div = document.getElementById("_" + row + cell)
-                // img = document.createElement('img')
-                // img.id = 'target'
-                // img.src = "https://res.cloudinary.com/ds3w3iwbk/image/upload/c_scale,w_30/v1550137162/target_PNG38.png"
-
-                // div.appendChild(img)
                 div.style.backgroundImage = "url('https://res.cloudinary.com/ds3w3iwbk/image/upload/c_scale,w_30/v1550137162/target_PNG38.png')"
                 div.style.backgroundRepeat = "no-repeat"
                 div.style.backgroundOrigin = "border-box"
@@ -210,7 +242,6 @@ new Vue({
         },
         mouseoutSalvoes: function (event, row, cell) {
             event.preventDefault();
-            //document.getElementById("target").remove()
             document.getElementById("_" + row + cell).style.backgroundImage = ""
         },
         salvoSelect(row, cell) {
@@ -347,8 +378,14 @@ new Vue({
         }
     },
     created() {
-        const gpId = new URLSearchParams(window.location.search).get("gp")
-        this.fetchJson(this.url + gpId)
+        this.fetchJson(this.url + this.gpId)
+        this.refreshData();
+        // const gpId = new URLSearchParams(window.location.search).get("gp")
+        // this.fetchJson(this.url + gpId)
+
+    },
+    beforeDestroy() {
+        clearInterval(this.refresh)
 
     }
 });
