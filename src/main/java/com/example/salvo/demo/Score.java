@@ -13,7 +13,7 @@ public class Score {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private Double score ;
-    private Date finshDate;
+    private Date finishDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -27,6 +27,7 @@ public class Score {
     public Score() {}
 
     public Score(Game game, Player player, Double score){
+        this.finishDate = new Date();
         this.player = player;
         this.game = game;
         this.score = score;
@@ -34,11 +35,19 @@ public class Score {
 
     public Score(Double score, Date finishDate) {
         this.score = score;
-        this.finshDate = finishDate;
+        this.finishDate = finishDate;
 
     }
 
     public void setGame(Game game){ this.game  = game; }
+
+    public void setFinishDate(Date finishDate) {
+        this.finishDate = finishDate;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
 
     public void setPlayer(Player player){ this.player  = player; }
 
@@ -58,6 +67,13 @@ public class Score {
         return this.player;
     }
 
+    public Date getFinishDate() {
+        return finishDate;
+    }
+
+    public Double getScore() {
+        return score;
+    }
 
     @Override
     public String toString() {

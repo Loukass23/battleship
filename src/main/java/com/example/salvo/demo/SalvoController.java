@@ -1,5 +1,6 @@
 package com.example.salvo.demo;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -100,6 +101,7 @@ public class SalvoController {
             games.put("id", game.getId());
             games.put("gamePlayers", findGamePlayersfromGame(game));
             games.put("scores", findScoresfromGame(game));
+            games.put("gameOver", game.gameOver);
             gamesObj.add(games);
         });
         Map<String, Object> map = new HashMap<>();
@@ -216,7 +218,13 @@ return map;
         return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
-
+    @RequestMapping(path = "/games/players/{gamePlayerId}/score", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> addScore(@PathVariable Long gamePlayerId,  @RequestBody Double scoreNumb){
+        GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
+        Score score = new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), scoreNumb);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    //TODO: Post score method front end
     @RequestMapping(path = "/games/players/{gamePlayerId}/salvoes", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addSalvoes(@PathVariable Long gamePlayerId,  @RequestBody List<Salvo> salvoes) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);

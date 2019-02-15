@@ -74,4 +74,8 @@ public class Player {
         return this.scores;
     }
 
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
+
 }

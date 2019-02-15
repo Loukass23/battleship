@@ -19,6 +19,7 @@ public class Game {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
     Date date ;
+    boolean gameOver = false;
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
@@ -66,4 +67,11 @@ public class Game {
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
     }
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
 }

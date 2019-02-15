@@ -120,7 +120,7 @@ public class DemoApplication extends SpringBootServletInitializer  {
             Ship s4 = new Ship("Destroyer",shipLocation4, true,2);
             Ship s5 = new Ship("Submarine",shipLocation5,true,3);
             Ship s6 = new Ship("Carrier",shipLocation6,false,5);
-			GamePlayer gp2 = new GamePlayer(g1, p2);
+			GamePlayer gp2 = new GamePlayer(g1, p5);
 
 
             gamePlayerRep.save(gp2);

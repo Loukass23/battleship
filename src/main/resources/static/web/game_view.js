@@ -225,7 +225,10 @@ new Vue({
             this.hits.forEach(e => {
                 if (e.hit.includes(cell))
                     turn = e.turn
-                if (e.sunk && !this.sunk.includes(e.sunk)) this.sunk.push(e.sunk)
+                if (e.sunk && !this.sunk.includes(e.sunk)) {
+                    this.sunk.push(e.sunk)
+                    // if(this.sunk.length == 5) 
+                }
             })
 
             return turn
@@ -379,9 +382,8 @@ new Vue({
     },
     created() {
         this.fetchJson(this.url + this.gpId)
-        this.refreshData();
-        // const gpId = new URLSearchParams(window.location.search).get("gp")
-        // this.fetchJson(this.url + gpId)
+        // this.refreshData();
+
 
     },
     beforeDestroy() {
