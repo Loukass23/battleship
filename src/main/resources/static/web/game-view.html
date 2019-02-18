@@ -39,13 +39,17 @@
 
         <div class="container-fluid text-center center-block" my-0>
 
-            <h3>Game: {{gameId}} turn: {{currentTurn+1}}</h3>
+            <h3>Game: {{gameId}} turn: {{currentTurn}} opponent: {{opponentTurn}}</h3>
             <div class="row text-center">
 
 
 
                 <div v-if="opponentTurn < currentTurn">Opponent's Turn </div>
                 <div v-else>Your Turn </div>
+
+                <div class="container" v-if="gameOver">
+                    <h2>GAME OVER</h2>
+                </div>
 
 
             </div>
@@ -91,7 +95,7 @@
                                 <thead>
                                     <th>Turn</th>
                                     <th>Hits</th>
-                                    <th>Sunk</th>
+
 
 
                                 </thead>
@@ -99,7 +103,7 @@
                                 <tbody v-for="hit in hits" :key="hit.id">
                                     <td>{{hit.turn}}</td>
                                     <td>{{hit.hit}}</td>
-                                    <td>{{hit.sunk}}</td>
+                                    {{sunk}}
 
                                 </tbody>
                             </table>

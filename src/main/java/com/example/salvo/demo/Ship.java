@@ -64,6 +64,7 @@ public class Ship {
     public boolean isHorizontal() {
         return horizontal;
     }
+
     public List<Object> isHit(Set<Salvo> salvo) {
         List<Object> hitsObj = new ArrayList<>();
         this.locations.stream().forEach(loc -> {
@@ -72,8 +73,8 @@ public class Ship {
                if( sal.getSalvoesLocations().contains(loc)){
                    hit.put("turn", sal.getTurn());
                    hit.put("hit", loc);
-                   this.hits ++;
-                   if (this.hits == this.size){
+
+                   if (this.isSunk()){
                        hit.put("sunk", this.type);
                    }
                    hitsObj.add(hit);
@@ -81,12 +82,27 @@ public class Ship {
         });
         return hitsObj;
     }
+    public void setHits(Salvo salvo) {
+
+        this.locations.stream().forEach(loc -> {
+            if(salvo.getSalvoesLocations().contains(loc)){
+              this.hits++;}
+        });
+    }
+
+    public boolean isSunk(){
+        return this.hits== this.size ? true : false;
+    }
 
     public long getId(){
         return this.id;
     }
     public String getType(){
         return this.type;
+    }
+
+    public Integer getHits() {
+        return hits;
     }
 
     public Integer getSize() {

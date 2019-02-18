@@ -73,7 +73,7 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			gameRep.save(g1);
 			gameRep.save(g2);
 			gameRep.save(g3);
-
+/*
 			//Ships Player 1
 			List<String> shipLocation1 = new ArrayList<>();
 			shipLocation1.add("H8");
@@ -160,7 +160,7 @@ public class DemoApplication extends SpringBootServletInitializer  {
 			Score scr2 = new Score(g1,p2, (double) 0);
 			scoreRep.save(scr2);
 			Score scr3 = new Score(g2,p1, 0.5);
-			scoreRep.save(scr3);
+			scoreRep.save(scr3);*/
 		};
 	}
 }

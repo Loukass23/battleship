@@ -1,6 +1,5 @@
 package com.example.salvo.demo;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +28,8 @@ public class SalvoController {
     private ShipRepository shipRep;
     @Autowired
     private SalvoRepository salvoRep;
+    @Autowired
+    private ScoreRepository scoreRep;
 
 
     @RequestMapping("/login")
@@ -66,6 +67,7 @@ public class SalvoController {
         }
 
     }
+
 
     @RequestMapping("/leaderboard")
     public List<Object> getleaderboard() {
@@ -218,27 +220,68 @@ return map;
         return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
-    @RequestMapping(path = "/games/players/{gamePlayerId}/score", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addScore(@PathVariable Long gamePlayerId,  @RequestBody Double scoreNumb){
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/score", method = RequestMethod.POST )
+    public ResponseEntity<String> addScore(@PathVariable Long gamePlayerId){
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
-        Score score = new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), scoreNumb);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        GamePlayer opponent = gamePlayer.getOpponent();
+        Game game = gamePlayer.getGame();
+        game.setGameOver(true);
+        if (gamePlayer.getTurn() == opponent.getTurn()){
+            Long oppScoreCount =  gamePlayer.getShips().stream().filter(ship -> ship.getHits() == ship.getSize()).count();
+            Long gpScoreCount =  opponent.getShips().stream().filter(ship -> ship.getHits() == ship.getSize()).count();
+            System.out.println(oppScoreCount);
+            System.out.println(gpScoreCount);
+            Double gpScore;
+            Double oppScore;
+            if(gpScoreCount == oppScoreCount) {
+               gpScore = 0.5;
+               oppScore = 0.5;
+            }
+            else if (gpScoreCount < oppScoreCount){
+                gpScore = (double) 0;
+                oppScore = (double) 1;
+            }
+            else{
+                gpScore = (double) 1;
+                oppScore = (double) 0;
+            }
+            Score score = new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), gpScore);
+            Score scoreOpp = new Score(opponent.getGame(), opponent.getPlayer(),oppScore);
+            scoreRep.save(score);
+            scoreRep.save(scoreOpp);
+            gameRep.save(game);
+
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        else return new ResponseEntity<>("Players must all finish their turns", HttpStatus.FORBIDDEN);
+
     }
-    //TODO: Post score method front end
+
     @RequestMapping(path = "/games/players/{gamePlayerId}/salvoes", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addSalvoes(@PathVariable Long gamePlayerId,  @RequestBody List<Salvo> salvoes) {
         GamePlayer gamePlayer = gamePlayerRep.findOne(gamePlayerId);
         if (gamePlayer.getPlayer() != loggedPlayer())
             return new ResponseEntity<>("Unauthorized User", HttpStatus.FORBIDDEN);
 
+        gamePlayer.incrementTurn();
+
         salvoes.stream().forEach(e -> {
 
             Salvo salvo = new Salvo(e.getTurn(), e.getSalvoesLocations());
             salvoRep.save(salvo);
+
+
             gamePlayer.addSalvo(salvo);
             gamePlayerRep.save(gamePlayer);
             salvoRep.save(salvo);
+
+            gamePlayer.getOpponent().getShips().stream().forEach(s -> {
+                s.setHits(salvo);
+                shipRep.save(s);
+            });
         });
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

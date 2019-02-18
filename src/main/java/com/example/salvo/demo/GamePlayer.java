@@ -30,6 +30,9 @@ public class GamePlayer {
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     Set<Salvo> salvoes = new HashSet<>();
 
+    private Integer turn ;
+    Integer shipsSunk;
+
     public GamePlayer() {
     }
 
@@ -37,6 +40,7 @@ public class GamePlayer {
         this.game = game;
         this.player = player;
         this.date = new Date();
+        this.turn = 1;
     }
 
     public void addShip(Ship ship) {
@@ -57,6 +61,9 @@ public class GamePlayer {
         this.game = game;
     }
 
+    public void incrementTurn() {
+        this.turn++;
+    }
 
     @Override
     public String toString() {
@@ -83,7 +90,8 @@ public class GamePlayer {
         return salvoes;
     }
 
-    private GamePlayer getOpponent(){
+    @JsonIgnore
+    public GamePlayer getOpponent(){
         Set<GamePlayer> gamePlayers = this.getGame().getGamePlayers();
         final GamePlayer[] opponent = new GamePlayer[1];
         gamePlayers.forEach(e -> {
@@ -94,14 +102,26 @@ public class GamePlayer {
         return  opponent[0];
     }
 
+    public Integer getTurn() {
+        return turn;
+    }
+    public Integer getOpponentTurn() {
+        return this.getOpponent().getTurn();
+    }
+
+
     public Set<Salvo> getOpponentSalvoes(){
         GamePlayer opponant = this.getOpponent();
        return  opponant.getSalvoes();
     }
+
+
     public List<Object> getHits(){
        GamePlayer opponant = this.getOpponent();
+
         List<Object> shipsHit = new ArrayList<>();
        opponant.getShips().stream().forEach(ship -> {
+
                shipsHit.add(ship.isHit(this.getSalvoes()));
        });
 return  shipsHit;

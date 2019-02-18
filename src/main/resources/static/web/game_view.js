@@ -4,6 +4,7 @@ new Vue({
         url: '/api/game_view/',
         gpId: new URLSearchParams(window.location.search).get("gp"),
         refresh: null,
+        gameOver: false,
         loggedUser: null,
         gamePlayerId: null,
         gameId: null,
@@ -95,8 +96,11 @@ new Vue({
                 .then(response => {
                     console.log(response.data)
                     this.gameId = response.data.game.id
+                    this.gameOver = response.data.game.gameOver
                     this.loggedUser = response.data.player
                     this.gamePlayerId = response.data.id
+                    this.currentTurn = response.data.turn
+                    this.opponentTurn = response.data.opponentTurn
 
                     this.setShips(response.data.ships)
                     this.setSalvoes(response.data.salvoes)
@@ -110,8 +114,14 @@ new Vue({
 
             hits.forEach(hit => {
                 this.hits = this.hits.concat(hit)
-                console.log(this.hits)
+                hit.forEach(e => {
+                    if (e.sunk) this.sunk.push(e.sunk)
+                })
             })
+            if (!this.gameOver && this.currentTurn == this.opponentTurn && this.sunk.length == 5) {
+                console.log('adding scores')
+                this.addScores();
+            }
 
         },
         setOpponentSalvoes(salvoes) {
@@ -120,7 +130,7 @@ new Vue({
                 this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(salvo)
                 if (salvo.turn > turn) turn = salvo.turn
             })
-            this.opponentTurn = turn
+
         },
         setSalvoes(salvoes) {
             let turn = 0
@@ -128,7 +138,7 @@ new Vue({
                 this.salvoesLocations = this.salvoesLocations.concat(salvo)
                 if (salvo.turn > turn) turn = salvo.turn
             })
-            this.currentTurn = turn
+
         },
         setShips(ships) {
             let count = 0;
@@ -145,6 +155,18 @@ new Vue({
 
             if (count == 5) this.readytoPlay = true
 
+        },
+        addScores() {
+            $.post("/api/games/players/" + this.gamePlayerId + "/score", {
+
+                })
+                .done(function () {
+                    console.log("scores added");
+                    location.reload();
+                })
+                .fail(function () {
+                    console.log("failed to add score");
+                });
         },
         addShip() {
             for (let key in this.shipFleet) {
@@ -172,12 +194,12 @@ new Vue({
             }
         },
         addSalvo() {
-            //for (let key in this.shipFleet) {
+
             $.post({
                     url: "/api/games/players/" + this.gamePlayerId + "/salvoes",
                     data: JSON.stringify(
                         [{
-                            "turn": this.currentTurn + 1,
+                            "turn": this.currentTurn,
                             "salvoesLocations": this.currentSalvo
                         }]
                     ),
@@ -225,17 +247,18 @@ new Vue({
             this.hits.forEach(e => {
                 if (e.hit.includes(cell))
                     turn = e.turn
-                if (e.sunk && !this.sunk.includes(e.sunk)) {
-                    this.sunk.push(e.sunk)
-                    // if(this.sunk.length == 5) 
-                }
+                // if (e.sunk && !this.sunk.includes(e.sunk)) {
+                //     this.sunk.push(e.sunk)
+                //     if (this.sunk.length == 5 && this.currentTurn == this.opponentTurn) this.addScores
+                // }
             })
 
             return turn
         },
+
         mouseonSalvoes: function (event, row, cell) {
             event.preventDefault();
-            if (!this.currentSalvo[1]) {
+            if (!this.currentSalvo[1] && this.opponentTurn) {
                 let div = document.getElementById("_" + row + cell)
                 div.style.backgroundImage = "url('https://res.cloudinary.com/ds3w3iwbk/image/upload/c_scale,w_30/v1550137162/target_PNG38.png')"
                 div.style.backgroundRepeat = "no-repeat"
