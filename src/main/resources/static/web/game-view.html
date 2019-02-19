@@ -5,6 +5,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="game-view.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
     <meta charset="UTF-8">
 
 
@@ -12,8 +19,6 @@
 </head>
 
 <body>
-
-
     <div id="app">
         <nav class="navbar" style="background-color: darkslategray; color: white">
             <div class="container-fluid center-block">
@@ -38,20 +43,26 @@
         </nav>
 
         <div class="container-fluid text-center center-block" my-0>
-
-            <h3>Game: {{gameId}} turn: {{currentTurn}} opponent: {{opponentTurn}}</h3>
+            <div class="row text-center d-flex justify-content-around">
+                <h3>Game: {{gameId}} turn: {{currentTurn}}</h3>
+                <h3 v-if="opponentTurn < currentTurn">Opponent's Turn </h3>
+                <h3 v-else>Your Turn </h3>
+            </div>
             <div class="row text-center">
-
-
-
-                <div v-if="opponentTurn < currentTurn">Opponent's Turn </div>
-                <div v-else>Your Turn </div>
-
                 <div class="container" v-if="gameOver">
-                    <h2>GAME OVER</h2>
+                    <div class="row text-center ">
+                        <div class=" col-lg-12 d-flex justify-content-around" style="background-color: darkslategray; color: white">
+                            <h2>Game over: </h2>
+                            <div v-for="score in scores" :key="score.id">
+                                <div v-if="score.player.id == loggedUser.id">
+                                    <h2 v-if="score.finalScore == 1">You Won!</h2>
+                                    <h2 v-else-if="score.finalScore == 0.5">You Tied!</h2>
+                                    <h2 v-else>You Lost</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-
             </div>
             <div class="row text-center">
                 <div class="col-lg-6 center-block mx-auto ">
@@ -89,26 +100,7 @@
                         </div>
 
                     </div>
-                    <div class="row">
-                        <div class="container">
-                            <table>
-                                <thead>
-                                    <th>Turn</th>
-                                    <th>Hits</th>
 
-
-
-                                </thead>
-
-                                <tbody v-for="hit in hits" :key="hit.id">
-                                    <td>{{hit.turn}}</td>
-                                    <td>{{hit.hit}}</td>
-                                    {{sunk}}
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
 
                 </div>
 
@@ -176,7 +168,7 @@
                     </div>
                     <div v-else class="container">
                         <h4>Salvoes Grid</h4>
-                        <div class="container ml-3" id="salvogrid">
+                        <div class="container" id="salvogrid">
 
                             <div class="row text-center">
                                 <div class="col-xs-1 border">#</div>
@@ -189,21 +181,32 @@
                                 <div v-on:click="salvoSelect(row , cell)" @mouseover="mouseonSalvoes($event,row,cell)"
                                     @mouseout="mouseoutSalvoes($event,row,cell)" v-for="cell in gameGrid.horizontal"
                                     v-bind:id="'_'+row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
-                                    <div v-if="isFired( row+cell) && !hasHit(row+cell)" class="col-sm-12 h-100" style="background-color: cadetblue">
-                                        <h5>{{isFired( row+cell)}}</h5>
-                                    </div>
-                                    <div v-else-if="hasHit( row+cell)" class="col-sm-12 h-100" style="background-color: green">
+                                    <div v-if="hasHit( row+cell)" class="col-sm-12 h-100" style="background-color: green">
                                         <h5>{{hasHit( row+cell)}}</h5>
                                     </div>
+                                    <div v-else-if="isFired( row+cell) && !hasHit(row+cell)" class="col-sm-12 h-100"
+                                        style="background-color: cadetblue">
+                                        <h5>{{isFired( row+cell)}}</h5>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
-                        <div v-if="opponentTurn < currentTurn" class="row text-center mx-2" style="background-color: darkslategray; color: white">
-                            Wait for your opponent to play
+                        <div v-if="opponentTurn < currentTurn" class="row text-center mx-2">
+                            <div class="col-lg-11 col-sm11 d-flex justify-content-center" style="background-color: darkslategray; color: white">
+                                <h6>Wait for your opponent to play</h6>
+                            </div>
 
                         </div>
-                        <div v-else class="row text-center mx-2" style="background-color: darkslategray; color: white">
-                            <div v-if="currentSalvo[0]" class=" col-sm-12 d-flex justify-content-between h-50">
+                        <div v-else-if="gameOver" class="row text-center mx-2">
+                            <div class=" col-lg-11 col-sm-11 d-flex justify-content-center " style="background-color: darkslategray; color: white">
+                                <h5>Game is over</h5>
+                            </div>
+
+                        </div>
+                        <div v-else class="row text-center mx-2">
+                            <div v-if="currentSalvo[0]" class=" col-lg-11 col-sm-11  d-flex justify-content-center "
+                                style="background-color: darkslategray; color: white">
                                 <div>
                                     <h5>Next salvo at {{currentSalvo[0]}}, {{currentSalvo[1]}} </h5>
                                 </div>
@@ -213,8 +216,33 @@
                                     <button class="btn btn-sm btn-info" v-on:click="currentSalvo = []">Cancel</button>
                                 </div>
                             </div>
-                            <div v-else class=" col-sm-12 d-flex h-50">
+                            <div v-else class=" col-lg-11 col-sm-11 d-flex  d-flex justify-content-center" style="background-color: darkslategray; color: white">
                                 <h6>Select two target locations on the salvoes grid</h6>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="container">
+                                <table>
+                                    <thead>
+                                        <th>Turn</th>
+                                        <th>Hits</th>
+                                        <th>Sunk</th>
+
+
+
+                                    </thead>
+
+                                    <tbody v-for="item in hits" :key="item.id">
+                                        <tr v-for="l in item.hit" :key="l.id">
+                                            <td>{{l.turn}}</td>
+                                            <td>{{l.hit}}</td>
+                                            <td v-if="item.type">{{item.type}}</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
                             </div>
 
                         </div>
@@ -226,12 +254,18 @@
 
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
         </div>
-
-
-
     </div>
-
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

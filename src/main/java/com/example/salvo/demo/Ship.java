@@ -74,9 +74,9 @@ public class Ship {
                    hit.put("turn", sal.getTurn());
                    hit.put("hit", loc);
 
-                   if (this.isSunk()){
+                  /* if (this.isSunk()){
                        hit.put("sunk", this.type);
-                   }
+                   }*/
                    hitsObj.add(hit);
             }});
         });
@@ -91,7 +91,7 @@ public class Ship {
     }
 
     public boolean isSunk(){
-        return this.hits== this.size ? true : false;
+        return this.hits == this.size ? true : false;
     }
 
     public long getId(){

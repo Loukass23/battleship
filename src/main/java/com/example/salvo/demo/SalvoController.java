@@ -230,8 +230,7 @@ return map;
         if (gamePlayer.getTurn() == opponent.getTurn()){
             Long oppScoreCount =  gamePlayer.getShips().stream().filter(ship -> ship.getHits() == ship.getSize()).count();
             Long gpScoreCount =  opponent.getShips().stream().filter(ship -> ship.getHits() == ship.getSize()).count();
-            System.out.println(oppScoreCount);
-            System.out.println(gpScoreCount);
+
             Double gpScore;
             Double oppScore;
             if(gpScoreCount == oppScoreCount) {

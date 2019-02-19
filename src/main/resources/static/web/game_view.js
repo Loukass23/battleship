@@ -8,6 +8,7 @@ new Vue({
         loggedUser: null,
         gamePlayerId: null,
         gameId: null,
+        scores: [],
         gameGrid: {
             horizontal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             vertical: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
@@ -88,7 +89,8 @@ new Vue({
         refreshData() {
             this.refresh = setInterval(() => {
                 this.fetchJson(this.url + this.gpId)
-            }, 3000)
+
+            }, 9000)
         },
         fetchJson(url) {
             axios
@@ -101,23 +103,30 @@ new Vue({
                     this.gamePlayerId = response.data.id
                     this.currentTurn = response.data.turn
                     this.opponentTurn = response.data.opponentTurn
+                    this.hits = response.data.hits
+                    this.scores = response.data.game.scores
+                    this.setHits(response.data.hits)
 
                     this.setShips(response.data.ships)
                     this.setSalvoes(response.data.salvoes)
                     this.setOpponentSalvoes(response.data.opponentSalvoes)
-                    this.setHits(response.data.hits)
+
+                    this.isGameOver()
                     response.data.opponentSalvoes.forEach(e => this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(e))
                 })
                 .catch(error => console.log(error))
         },
         setHits(hits) {
+            this.sunk = []
 
-            hits.forEach(hit => {
-                this.hits = this.hits.concat(hit)
-                hit.forEach(e => {
-                    if (e.sunk) this.sunk.push(e.sunk)
-                })
-            })
+            hits.forEach((e) => {
+
+                if (e.type) this.sunk.push(e.type)
+            });
+
+        },
+        isGameOver() {
+
             if (!this.gameOver && this.currentTurn == this.opponentTurn && this.sunk.length == 5) {
                 console.log('adding scores')
                 this.addScores();
@@ -130,6 +139,9 @@ new Vue({
                 this.opponentSalvoesLocations = this.opponentSalvoesLocations.concat(salvo)
                 if (salvo.turn > turn) turn = salvo.turn
             })
+
+        },
+        setModal() {
 
         },
         setSalvoes(salvoes) {
@@ -244,21 +256,19 @@ new Vue({
         },
         hasHit(cell) {
             let turn = null
-            this.hits.forEach(e => {
-                if (e.hit.includes(cell))
-                    turn = e.turn
-                // if (e.sunk && !this.sunk.includes(e.sunk)) {
-                //     this.sunk.push(e.sunk)
-                //     if (this.sunk.length == 5 && this.currentTurn == this.opponentTurn) this.addScores
-                // }
-            })
 
+            this.hits.forEach(e => {
+
+                e.hit.forEach(el => {
+                    if (el.hit == cell) turn = el.turn
+                })
+            })
             return turn
         },
 
         mouseonSalvoes: function (event, row, cell) {
             event.preventDefault();
-            if (!this.currentSalvo[1] && this.opponentTurn) {
+            if (!this.currentSalvo[1] && !this.gameOver) {
                 let div = document.getElementById("_" + row + cell)
                 div.style.backgroundImage = "url('https://res.cloudinary.com/ds3w3iwbk/image/upload/c_scale,w_30/v1550137162/target_PNG38.png')"
                 div.style.backgroundRepeat = "no-repeat"
@@ -405,7 +415,7 @@ new Vue({
     },
     created() {
         this.fetchJson(this.url + this.gpId)
-        // this.refreshData();
+        this.refreshData();
 
 
     },

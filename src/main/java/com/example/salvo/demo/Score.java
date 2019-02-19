@@ -62,7 +62,7 @@ public class Score {
         return this.game;
     }
 
-    @JsonIgnore
+    
     public Player getPlayer() {
         return this.player;
     }

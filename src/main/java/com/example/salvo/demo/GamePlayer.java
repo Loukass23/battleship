@@ -121,8 +121,12 @@ public class GamePlayer {
 
         List<Object> shipsHit = new ArrayList<>();
        opponant.getShips().stream().forEach(ship -> {
+           Map<String, Object> sunk = new HashMap<>();
+                sunk.put("hit", ship.isHit(this.getSalvoes()));
+           if (ship.isSunk()){
+               sunk.put("type",ship.getType());}
+               shipsHit.add(sunk);
 
-               shipsHit.add(ship.isHit(this.getSalvoes()));
        });
 return  shipsHit;
     }
