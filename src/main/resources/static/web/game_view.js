@@ -126,7 +126,7 @@ new Vue({
 
         },
         isGameOver() {
-
+            console.log(this.sunk)
             if (!this.gameOver && this.currentTurn == this.opponentTurn && this.sunk.length == 5) {
                 console.log('adding scores')
                 this.addScores();

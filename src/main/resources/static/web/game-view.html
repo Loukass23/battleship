@@ -20,7 +20,7 @@
 
 <body>
     <div id="app">
-        <nav class="navbar" style="background-color: darkslategray; color: white">
+        <nav class="navbar">
             <div class="container-fluid center-block">
                 <div class="navbar-header">
                     <a class="navbar-brand">Battleship</a>
@@ -43,21 +43,21 @@
         </nav>
 
         <div class="container-fluid text-center center-block" my-0>
-            <div class="row text-center d-flex justify-content-around">
-                <h3>Game: {{gameId}} turn: {{currentTurn}}</h3>
+            <div v-if="!gameOver" class="row text-center d-flex justify-content-around">
+                <h3>Game {{gameId}} turn: {{currentTurn}}</h3>
                 <h3 v-if="opponentTurn < currentTurn">Opponent's Turn </h3>
                 <h3 v-else>Your Turn </h3>
             </div>
-            <div class="row text-center">
-                <div class="container" v-if="gameOver">
+            <div v-else class="row text-center">
+                <div class="container">
                     <div class="row text-center ">
                         <div class=" col-lg-12 d-flex justify-content-around" style="background-color: darkslategray; color: white">
-                            <h2>Game over: </h2>
+                            <h2>---Game over--- </h2>
                             <div v-for="score in scores" :key="score.id">
                                 <div v-if="score.player.id == loggedUser.id">
-                                    <h2 v-if="score.finalScore == 1">You Won!</h2>
-                                    <h2 v-else-if="score.finalScore == 0.5">You Tied!</h2>
-                                    <h2 v-else>You Lost</h2>
+                                    <h2 v-if="score.finalScore == 1">---You Won---</h2>
+                                    <h2 v-else-if="score.finalScore == 0.5">---You Tied!---</h2>
+                                    <h2 v-else>---You Lost---</h2>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
             <div class="row text-center">
                 <div class="col-lg-6 center-block mx-auto ">
                     <h4>Fleet Grid</h4>
-                    <div class="container" id="gamegrid">
+                    <div class="container ml-4" id="gamegrid">
                         <div class="row text-center">
                             <div class="col-xs-1 border">#</div>
                             <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
@@ -100,7 +100,16 @@
                         </div>
 
                     </div>
+                    <div class="row text-center mx-2">
+                        <div v-if="readytoPlay" class="col-lg-12 d-flex justify-content-center" style="background-color: darkslategray; color: white">
+                            <p>You sunk the opponent's
+                                {{sunk[0]}}&nbsp{{sunk[1]}}&nbsp{{sunk[2]}}&nbsp{{sunk[3]}}&nbsp{{sunk[4]}}</p>
+                        </div>
+                        <div v-else class="col-lg-11 col-sm11 d-flex justify-content-center" style="background-color: darkslategray; color: white">
+                            <h6>Place your ships on the grid</h6>
+                        </div>
 
+                    </div>
 
                 </div>
 
@@ -157,14 +166,11 @@
                                 <button v-on:click="rotateBattleship" class="btn"><i class="fas fa-sync-alt"></i> <img
                                         id="Battleship" height="40px" :width="shipFleet.battleship.width" :src="shipFleet.battleship.img"
                                         draggable="true" @dragstart="drag($event)"></button>
-
                             </div>
                         </div>
                         <div class="row">
                             <button v-show="invalidPos" class="btn btn-outline-danger my-2 my-sm-0">Invalid Position</button>
                         </div>
-
-
                     </div>
                     <div v-else class="container">
                         <h4>Salvoes Grid</h4>
@@ -196,13 +202,11 @@
                             <div class="col-lg-11 col-sm11 d-flex justify-content-center" style="background-color: darkslategray; color: white">
                                 <h6>Wait for your opponent to play</h6>
                             </div>
-
                         </div>
                         <div v-else-if="gameOver" class="row text-center mx-2">
                             <div class=" col-lg-11 col-sm-11 d-flex justify-content-center " style="background-color: darkslategray; color: white">
                                 <h5>Game is over</h5>
                             </div>
-
                         </div>
                         <div v-else class="row text-center mx-2">
                             <div v-if="currentSalvo[0]" class=" col-lg-11 col-sm-11  d-flex justify-content-center "

@@ -31,6 +31,7 @@ public class GamePlayer {
     Set<Salvo> salvoes = new HashSet<>();
 
     private Integer turn ;
+    boolean fleetReady;
     Integer shipsSunk;
 
     public GamePlayer() {
@@ -41,6 +42,7 @@ public class GamePlayer {
         this.player = player;
         this.date = new Date();
         this.turn = 1;
+        this.fleetReady = false;
     }
 
     public void addShip(Ship ship) {
@@ -52,6 +54,11 @@ public class GamePlayer {
         salvoes.add(salvo);
     }
 
+    public void setFleetReady() {
+        System.out.println(this.ships.size());
+        if(this.ships.size() == 5) this.fleetReady = true;
+
+    }
 
     public void setPlayer(Player player) {
         this.player = player;
@@ -80,6 +87,10 @@ public class GamePlayer {
 
     public Player getPlayer() {
         return this.player;
+    }
+
+    public boolean isFleetReady() {
+        return fleetReady;
     }
 
     public Set<Ship> getShips() {

@@ -214,9 +214,11 @@ return map;
             Ship ship = new Ship(e.getType(), e.getLocations(), e.isHorizontal(), e.getSize());
             shipRep.save(ship);
             gamePlayer.addShip(ship);
+            gamePlayer.setFleetReady();
             gamePlayerRep.save(gamePlayer);
             shipRep.save(ship);
         });
+
         return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
