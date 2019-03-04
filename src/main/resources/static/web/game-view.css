@@ -8,6 +8,12 @@
 
 }
 
+a {
+  color: white;
+  text-decoration: none;
+}
+
+
 .shipimg {
   z-index: 1;
   position: absolute;
@@ -27,7 +33,7 @@
 .puffIn {
   -webkit-animation-name: puffIn;
   animation-name: puffIn;
-  animation-duration: .5s;
+  animation-duration: .8s;
   border-radius: 100px;
 
   position: absolute;

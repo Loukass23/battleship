@@ -34,7 +34,9 @@ public class SalvoController {
 
     @RequestMapping("/login")
     public Player loggedPlayer() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return playerRep.findByUsername(authentication.getName());
         }

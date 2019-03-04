@@ -20,7 +20,7 @@
 
 <body>
     <div id="app">
-        <nav class="navbar">
+        <nav class="navbar" style="background-color: darkslategray; color: white">
             <div class="container-fluid center-block">
                 <div class="navbar-header">
                     <a class="navbar-brand">Battleship</a>
@@ -43,16 +43,15 @@
         </nav>
 
         <div class="container-fluid text-center center-block" my-0>
-            <div v-if="!gameOver" class="row text-center d-flex justify-content-around">
-                <h3>Game {{gameId}} turn: {{currentTurn}}</h3>
-                <h3 v-if="opponentTurn < currentTurn">Opponent's Turn </h3>
-                <h3 v-else>Your Turn </h3>
+            <div v-if="!gameOver" class="row text-center d-flex justify-content-around" style=" color: black">
+                <h5>Game {{gameId}} turn: {{currentTurn}}</h5>
+                <h5 v-if="opponentTurn < currentTurn">Opponent's Turn </h5>
+                <h5 v-else>Your Turn </h5>
             </div>
             <div v-else class="row text-center">
                 <div class="container">
                     <div class="row text-center ">
-                        <div class=" col-lg-12 d-flex justify-content-around" style="background-color: darkslategray; color: white">
-                            <h2>---Game over--- </h2>
+                        <div class=" col-lg-12 d-flex justify-content-around" >
                             <div v-for="score in scores" :key="score.id">
                                 <div v-if="score.player.id == loggedUser.id">
                                     <h2 v-if="score.finalScore == 1">---You Won---</h2>
@@ -65,9 +64,9 @@
                 </div>
             </div>
             <div class="row text-center">
-                <div class="col-lg-6 center-block mx-auto ">
+                <div class="col-lg-6 center-block  " >
                     <h4>Fleet Grid</h4>
-                    <div class="container ml-4" id="gamegrid">
+                    <div class="container ml-4" id="gamegrid" style="background-color: white; color: black">
                         <div class="row text-center">
                             <div class="col-xs-1 border">#</div>
                             <div class="col-xs-1 border" v-for="column in gameGrid.horizontal" :key="column.id">
@@ -101,11 +100,11 @@
 
                     </div>
                     <div class="row text-center mx-2">
-                        <div v-if="readytoPlay" class="col-lg-12 d-flex justify-content-center" style="background-color: darkslategray; color: white">
-                            <p>You sunk the opponent's
+                        <div v-if="readytoPlay " class="col-lg-12 d-flex justify-content-center" style="color: black">
+                            <p v-if="sunk[0]">You sunk the opponent's
                                 {{sunk[0]}}&nbsp{{sunk[1]}}&nbsp{{sunk[2]}}&nbsp{{sunk[3]}}&nbsp{{sunk[4]}}</p>
                         </div>
-                        <div v-else class="col-lg-11 col-sm11 d-flex justify-content-center" style="background-color: darkslategray; color: white">
+                        <div v-else class="col-lg-11 col-sm11 d-flex justify-content-center" style="color: black">
                             <h6>Place your ships on the grid</h6>
                         </div>
 
@@ -113,7 +112,7 @@
 
                 </div>
 
-                <div class="col-lg-6">
+                <div class="col-lg-6" >
 
                     <div v-if="!readytoPlay" class="container">
                         <h3>Fleet</h3>
@@ -174,7 +173,7 @@
                     </div>
                     <div v-else class="container">
                         <h4>Salvoes Grid</h4>
-                        <div class="container" id="salvogrid">
+                        <div class="container ml-2" id="salvogrid" style="background-color: white; color: black">
 
                             <div class="row text-center">
                                 <div class="col-xs-1 border">#</div>
@@ -187,30 +186,43 @@
                                 <div v-on:click="salvoSelect(row , cell)" @mouseover="mouseonSalvoes($event,row,cell)"
                                     @mouseout="mouseoutSalvoes($event,row,cell)" v-for="cell in gameGrid.horizontal"
                                     v-bind:id="'_'+row + cell" :key="cell.id" class="col-xs-1 border px-0 py-0 mx-0 my-0">
-                                    <div v-if="hasHit( row+cell)" class="col-sm-12 h-100" style="background-color: green">
+                                    <div class="puffIn infotooltip" id="puffIn" v-if="hasHit( row+cell)" class="col-sm-12 h-100">
+                                        <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550826612/check.png">
+
+                                        <span class="tooltiptext">Turn {{isFired( row+cell)}}</span>
+                                    </div>
+                                    <!-- <div v-if="hasHit( row+cell)" class="col-sm-12 h-100" style="background-color: green">
                                         <h5>{{hasHit( row+cell)}}</h5>
+                                    </div> -->
+                                    <div class="puffIn infotooltip" id="puffIn" v-else-if="isFired( row+cell) && !hasHit(row+cell)"
+                                        class="col-sm-12 h-100">
+                                        <img width="35px" height="35px" src="https://res.cloudinary.com/ds3w3iwbk/image/upload/v1550826612/hit.png">
+
+                                        <span class="tooltiptext">Turn {{isFired( row+cell)}}</span>
                                     </div>
-                                    <div v-else-if="isFired( row+cell) && !hasHit(row+cell)" class="col-sm-12 h-100"
+                                    <!-- <div v-else-if="isFired( row+cell) && !hasHit(row+cell)" class="col-sm-12 h-100"
                                         style="background-color: cadetblue">
+                                        
+
                                         <h5>{{isFired( row+cell)}}</h5>
-                                    </div>
+                                    </div> -->
 
                                 </div>
                             </div>
                         </div>
                         <div v-if="opponentTurn < currentTurn" class="row text-center mx-2">
-                            <div class="col-lg-11 col-sm11 d-flex justify-content-center" style="background-color: darkslategray; color: white">
+                            <div class="col-lg-11 col-sm11 d-flex justify-content-center" style=" color: black">
                                 <h6>Wait for your opponent to play</h6>
                             </div>
                         </div>
                         <div v-else-if="gameOver" class="row text-center mx-2">
-                            <div class=" col-lg-11 col-sm-11 d-flex justify-content-center " style="background-color: darkslategray; color: white">
+                            <div class=" col-lg-11 col-sm-11 d-flex justify-content-center " style=" color: black">
                                 <h5>Game is over</h5>
                             </div>
                         </div>
                         <div v-else class="row text-center mx-2">
                             <div v-if="currentSalvo[0]" class=" col-lg-11 col-sm-11  d-flex justify-content-center "
-                                style="background-color: darkslategray; color: white">
+                                style=" color: black">
                                 <div>
                                     <h5>Next salvo at {{currentSalvo[0]}}, {{currentSalvo[1]}} </h5>
                                 </div>
@@ -220,12 +232,12 @@
                                     <button class="btn btn-sm btn-info" v-on:click="currentSalvo = []">Cancel</button>
                                 </div>
                             </div>
-                            <div v-else class=" col-lg-11 col-sm-11 d-flex  d-flex justify-content-center" style="background-color: darkslategray; color: white">
+                            <div v-else class=" col-lg-11 col-sm-11 d-flex  d-flex justify-content-center" style=" color: black">
                                 <h6>Select two target locations on the salvoes grid</h6>
                             </div>
 
                         </div>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="container">
                                 <table>
                                     <thead>
@@ -249,7 +261,7 @@
                                 </table>
                             </div>
 
-                        </div>
+                        </div> -->
 
 
 

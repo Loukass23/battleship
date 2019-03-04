@@ -55,7 +55,6 @@ public class GamePlayer {
     }
 
     public void setFleetReady() {
-        System.out.println(this.ships.size());
         if(this.ships.size() == 5) this.fleetReady = true;
 
     }

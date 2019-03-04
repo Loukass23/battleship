@@ -4,9 +4,16 @@ new Vue({
     url: '/api/games',
     loggedUser: [],
     games: [],
-    players: []
+    players: [],
+    refresh: null,
   },
   methods: {
+    refreshData() {
+      this.refresh = setInterval(() => {
+        this.fetchJson(this.url)
+
+      }, 9000)
+    },
     fetchJson(url) {
       axios
         .get(url)
@@ -103,6 +110,7 @@ new Vue({
 
   created() {
     this.fetchJson(this.url)
+    this.refreshData();
 
   }
 });

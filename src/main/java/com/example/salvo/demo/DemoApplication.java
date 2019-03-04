@@ -3,6 +3,7 @@ package com.example.salvo.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +36,6 @@ import java.util.List;
 
 @SpringBootApplication
 public class DemoApplication extends SpringBootServletInitializer  {
-
 
 
 	public static void main(String[] args) {
