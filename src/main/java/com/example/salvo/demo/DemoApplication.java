@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -41,7 +42,6 @@ public class DemoApplication extends SpringBootServletInitializer  {
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
-
 	@Bean
 	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRep,
 									  GamePlayerRepository gamePlayerRep, ShipRepository shipRep,
@@ -183,7 +183,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
 	@Autowired
 	private PlayerRepository playerRepository;
-	}
+}
 
 
 @EnableWebSecurity
@@ -197,7 +197,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 				.csrf().disable()
 				.authorizeRequests()
-                .antMatchers("/").permitAll()
+				.antMatchers("/rest/players*").permitAll()
+				.antMatchers("/manager.html*").permitAll()
+				.antMatchers("/manager.js*").permitAll()
+
+				.antMatchers("/").permitAll()
 				.antMatchers("/web/home*").permitAll()
 				.antMatchers("/web/players*").permitAll()
 				.antMatchers("/api/players").permitAll()

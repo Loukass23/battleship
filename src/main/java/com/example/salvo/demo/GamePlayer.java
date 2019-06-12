@@ -152,3 +152,4 @@ return  shipsHit;
         return myScore[0];
     }
 }
+
